@@ -2,7 +2,7 @@
 <feed xmlns="http://www.w3.org/2005/Atom">
     <id>https://jianhuchen.coding.me</id>
     <title>不想长大的石头</title>
-    <updated>2019-11-19T11:30:16.493Z</updated>
+    <updated>2019-11-19T11:30:43.033Z</updated>
     <generator>https://github.com/jpmonette/feed</generator>
     <link rel="alternate" href="https://jianhuchen.coding.me"/>
     <link rel="self" href="https://jianhuchen.coding.me/atom.xml"/>
@@ -63,7 +63,7 @@ $ sudo apt-get install python-pip
 <pre><code class="language-shell">$ gnome-session-properties
 </code></pre>
 <p>然后点击<code>添加（Add）</code>，在弹出的框框里，<code>名称</code>随便填，<code>注释</code>随便填，<code>命令</code>填上面启动ss时你在终端输入的命令，比如我的是<code>sslocal -c /home/jhchen/ss_config/ss.json</code></p>
-<img src="http://img.cjh.zone/addStart.png" alt="addStart" width=200>
+<img src="http://img.cjh.zone/addStart.png" alt="addStart" width=300>
 <h3 id="span-idproxy配置代理span"><span id="proxy">配置代理</span></h3>
 <p>ss正常运行之后，你会发现还是上不了网，原因是还需要作代理配置<br>
 这里有两种代理模式，分别是<code>全局模式</code>和<code>PAC模式</code>，用过ss的人都知道这是啥意思，我就不解释了</p>
@@ -92,7 +92,7 @@ $ sudo apt-get install shadowsocks-qt5
 <p>安装好之后，按下<code>super</code>按键（也就是Windows键啦～！），输入<code>shadowsocks</code>就能看到软件图标了，点击启动它，为了方便你可以把它固定到<code>启动器</code>，这样以后不用每次启动都要去搜索一遍</p>
 <img src="http://img.cjh.zone/shadowsocks-qt5-search.png" alt="shadowsocks-qt5-search" width=450>
 <p>打开之后，在空白处右击鼠标，选择<code>添加</code>-&gt;<code>手动</code>，然后在弹出的框框里天上你的vps信息</p>
-<p>!<img src="http://img.cjh.zone/ss-qt5-setting.png" alt="ss-qt5-setting" width=200></p>
+<p>!<img src="http://img.cjh.zone/ss-qt5-setting.png" alt="ss-qt5-setting" width=300></p>
 <p>配置后就可以连接了</p>
 <img src="http://img.cjh.zone/shadowsocks-qt5.png" alt="shadowsocks-qt5" width=450>
 <p>到现在，shadowsocks-qt5的配置完成了，接下来还是要设置代理，具体步骤跟上面的命令行程序配置代理一毛一样，点**<a href="#proxy">这里</a>**回去看看～</p>
