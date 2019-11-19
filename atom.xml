@@ -2,7 +2,7 @@
 <feed xmlns="http://www.w3.org/2005/Atom">
     <id>https://jianhuchen.coding.me</id>
     <title>不想长大的石头</title>
-    <updated>2019-11-19T11:29:21.395Z</updated>
+    <updated>2019-11-19T11:30:16.493Z</updated>
     <generator>https://github.com/jpmonette/feed</generator>
     <link rel="alternate" href="https://jianhuchen.coding.me"/>
     <link rel="self" href="https://jianhuchen.coding.me/atom.xml"/>
@@ -47,10 +47,10 @@ $ sudo apt-get install python-pip
 <pre><code class="language-shell">$ sslocal -c /home/jhchen/ss_config/ss.json
 </code></pre>
 <p>其中<code>/home/jhchen/ss_config/ss.json</code>是我的配置文件的保存路径，看到类似如下效果就表示连接成功了</p>
-<img src="http://img.cjh.zone/ssRun.png" alt="ssRun" width=400>
+<img src="http://img.cjh.zone/ssRun.png" alt="ssRun" width=450>
 <blockquote>
 <p>如果你跟我一样使用的是<code>chacha20</code>的加密方式，那么你也可能会报这样的错误：<strong>缺少libsodium</strong>，解决方法参考<a href="https://blog.csdn.net/lengconglin/article/details/77655845">这篇文章</a>吧</p>
-<img src="http://img.cjh.zone/libsodium.png" alt="libsodium" width=400>
+<img src="http://img.cjh.zone/libsodium.png" alt="libsodium" width=450>
 </blockquote>
 <h4 id="直接输入命令运行">直接输入命令运行</h4>
 <p>第二种方式直接打开终端，输入以下命令运行</p>
@@ -69,7 +69,7 @@ $ sudo apt-get install python-pip
 这里有两种代理模式，分别是<code>全局模式</code>和<code>PAC模式</code>，用过ss的人都知道这是啥意思，我就不解释了</p>
 <h4 id="全局模式">全局模式</h4>
 <p>打开<code>系统设置</code>-&gt;<code>网络</code>-&gt;<code>网络代理</code>，在<code>方法</code>这一栏选择<code>手动</code>，然后作如下配置，再点击<code>应用到整个系统</code>，完工！但是这样你所有的流量都走的是vps，我不太喜欢这种模式，因为有些国内的网站本来可以很快访问的，由于经过vps中转了一次，就会变得有些慢，其次是还会耗费你vps的流量啊～</p>
-<img src="http://img.cjh.zone/all.png" alt="all" width=400>
+<img src="http://img.cjh.zone/all.png" alt="all" width=450>
 <h4 id="pac模式">PAC模式</h4>
 <p>要想使用PAC模式，必须要有PAC文件，一共两种途径获得，一种是网络，一种是本地。</p>
 <p>我这里用的是本地，所以只介绍本地PAC的方法，网络PAC大家自行搜索吧～</p>
@@ -82,7 +82,7 @@ $ sudo pip install genpac
 </code></pre>
 <p>执行完上面的命令之后会在你的当前目录产生一个名字为<code>autoproxy.pac</code>的文件，我把它跟前面的配置文件<code>ss.json</code>放在了一起（<code>/home/jhchen/ss_config/autoproxy.pac</code>）</p>
 <p>最后，打开<code>系统设置</code>-&gt;<code>网络</code>-&gt;<code>网络代理</code>，在<code>方法</code>这一栏选择<code>自动</code>，把<code>URL</code>改为你的PAC文件所在的目录，点击<code>应用到整个系统</code>，就像下面这张图一样</p>
-<img src="http://img.cjh.zone/select.png" alt="select" width=400>
+<img src="http://img.cjh.zone/select.png" alt="select" width=450>
 <h2 id="配置shadowsocks-qt5图形界面版">配置Shadowsocks-qt5（图形界面版）</h2>
 <p>打开terminal，输入以下命令安装Shadowsocks-qt5</p>
 <pre><code class="language-shell">$ sudo add-apt-repository ppa:hzwhuang/ss-qt5
@@ -90,11 +90,11 @@ $ sudo apt-get update
 $ sudo apt-get install shadowsocks-qt5
 </code></pre>
 <p>安装好之后，按下<code>super</code>按键（也就是Windows键啦～！），输入<code>shadowsocks</code>就能看到软件图标了，点击启动它，为了方便你可以把它固定到<code>启动器</code>，这样以后不用每次启动都要去搜索一遍</p>
-<img src="http://img.cjh.zone/shadowsocks-qt5-search.png" alt="shadowsocks-qt5-search" width=500>
+<img src="http://img.cjh.zone/shadowsocks-qt5-search.png" alt="shadowsocks-qt5-search" width=450>
 <p>打开之后，在空白处右击鼠标，选择<code>添加</code>-&gt;<code>手动</code>，然后在弹出的框框里天上你的vps信息</p>
 <p>!<img src="http://img.cjh.zone/ss-qt5-setting.png" alt="ss-qt5-setting" width=200></p>
 <p>配置后就可以连接了</p>
-<img src="http://img.cjh.zone/shadowsocks-qt5.png" alt="shadowsocks-qt5" width=500>
+<img src="http://img.cjh.zone/shadowsocks-qt5.png" alt="shadowsocks-qt5" width=450>
 <p>到现在，shadowsocks-qt5的配置完成了，接下来还是要设置代理，具体步骤跟上面的命令行程序配置代理一毛一样，点**<a href="#proxy">这里</a>**回去看看～</p>
 <p>这里有shadowsocks-qt5的中文安装指南和使用手册，有需要的话可以看看：https://github.com/shadowsocks/shadowsocks-qt5/wiki</p>
 <blockquote>
