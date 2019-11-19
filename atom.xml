@@ -2,7 +2,7 @@
 <feed xmlns="http://www.w3.org/2005/Atom">
     <id>https://jianhuchen.coding.me</id>
     <title>不想长大的石头</title>
-    <updated>2019-11-19T12:53:16.628Z</updated>
+    <updated>2019-11-19T13:06:49.205Z</updated>
     <generator>https://github.com/jpmonette/feed</generator>
     <link rel="alternate" href="https://jianhuchen.coding.me"/>
     <link rel="self" href="https://jianhuchen.coding.me/atom.xml"/>
@@ -11,10 +11,10 @@
     <rights>All rights reserved 2019, 不想长大的石头</rights>
     <entry>
         <title type="html"><![CDATA[科学上网-Linux(Ubuntu 16.04)配置shadowsocks客户端]]></title>
-        <id>https://jianhuchen.coding.me/post/ke-xue-shang-wang-linuxubuntu-1604pei-zhi-shadowsocks-ke-hu-duan</id>
-        <link href="https://jianhuchen.coding.me/post/ke-xue-shang-wang-linuxubuntu-1604pei-zhi-shadowsocks-ke-hu-duan">
+        <id>https://jianhuchen.coding.me/post/to_world</id>
+        <link href="https://jianhuchen.coding.me/post/to_world">
         </link>
-        <updated>2019-11-19T11:21:13.000Z</updated>
+        <updated>2018-11-24T19:16:29.000Z</updated>
         <content type="html"><![CDATA[<p>Linux下的Shadowsocks的客户端（下文简称为ss）有两种版本，一种是GUI的，这种有图形界面，比较适合新手使用，另一种是命令行形式的。接下来详细介绍下这两种形式的安装方法：</p>
 <h2 id="配置shadowsocks命令行程序">配置Shadowsocks命令行程序</h2>
 <p>命令行版本我分了4个步骤，稍微有点繁琐，其实还好啦～</p>
