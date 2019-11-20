@@ -1,18 +1,18 @@
 <?xml version="1.0" encoding="utf-8"?>
 <feed xmlns="http://www.w3.org/2005/Atom">
-    <id>https://b.cjh.zone</id>
+    <id>https://jianhuchen-test.github.io/</id>
     <title>不想长大的石头</title>
-    <updated>2019-11-20T03:15:20.805Z</updated>
+    <updated>2019-11-20T03:32:14.675Z</updated>
     <generator>https://github.com/jpmonette/feed</generator>
-    <link rel="alternate" href="https://b.cjh.zone"/>
-    <link rel="self" href="https://b.cjh.zone/atom.xml"/>
-    <logo>https://b.cjh.zone/images/avatar.png</logo>
-    <icon>https://b.cjh.zone/favicon.ico</icon>
+    <link rel="alternate" href="https://jianhuchen-test.github.io/"/>
+    <link rel="self" href="https://jianhuchen-test.github.io//atom.xml"/>
+    <logo>https://jianhuchen-test.github.io//images/avatar.png</logo>
+    <icon>https://jianhuchen-test.github.io//favicon.ico</icon>
     <rights>All rights reserved 2019, 不想长大的石头</rights>
     <entry>
         <title type="html"><![CDATA[科学上网-Linux(Ubuntu 16.04)配置shadowsocks客户端]]></title>
-        <id>https://b.cjh.zone/post/ubuntu_ss_config</id>
-        <link href="https://b.cjh.zone/post/ubuntu_ss_config">
+        <id>https://jianhuchen-test.github.io//post/ubuntu_ss_config</id>
+        <link href="https://jianhuchen-test.github.io//post/ubuntu_ss_config">
         </link>
         <updated>2018-11-24T19:16:29.000Z</updated>
         <content type="html"><![CDATA[<p>Linux下的Shadowsocks的客户端（下文简称为ss）有两种版本，一种是GUI的，这种有图形界面，比较适合新手使用，另一种是命令行形式的。接下来详细介绍下这两种形式的安装方法：</p>
