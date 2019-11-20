@@ -2,7 +2,7 @@
   <head>
     <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
-<title>Windows与Ubuntu时间不同步的解决方案 | 不想长大的石头</title>
+<title>Ubuntu16.04安装Windows虚拟机 | 不想长大的石头</title>
 <meta name="description" content="" />
 <link rel="shortcut icon" href="https://jianhuchen-test.github.io//favicon.ico?v=1574224041724">
 <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.7.2/css/all.css" integrity="sha384-fnmOCqbTlWIlj8LyTjo7mOUStjsKC4pOpQbqyi7RrhN7udi9RwhKkMHpvLbHG9Sr" crossorigin="anonymous">
@@ -89,38 +89,77 @@
         <div class="post-detail">
           <article class="post">
             <h2 class="post-title">
-              Windows与Ubuntu时间不同步的解决方案
+              Ubuntu16.04安装Windows虚拟机
             </h2>
             <div class="post-info">
               <span>
-                2018-11-26
+                2018-12-11
               </span>
               <span>
-                1 min read
+                2 min read
               </span>
               
             </div>
             
             <div class="post-content-wrapper">
               <div class="post-content">
-                <p>装好Ubuntu之后再回到Windows发现两个系统的时间不同步，于是google了一下，我是按照下面的方法解决的，供大家参考~</p>
-<ol>
-<li>在ubuntu16.04下更新本地时间：</li>
-</ol>
-<pre><code class="language-bash">sudo apt-get install ntpdate
-sudo nptdate time.windows.com
+                <p>装好Ubuntu之后，大部分时间都是在使用Ubuntu了，但是无奈有些软件只能在Windows平台使用，来回切换双系统实在是麻烦，于是想着在Ubuntu上装个Windows的虚拟机，这里记录下安装过程，留给自己以后需要再安装时查看，也给大家参考～</p>
+<h2 id="安装virtualbox">安装virtualbox</h2>
+<pre><code class="language-shell">$ sudo apt-get install virtualbox
 </code></pre>
-<ol start="2">
-<li>将本地时间更新到硬件上：</li>
-</ol>
-<pre><code class="language-bash">sudo hwclock --localtime --systohc
-</code></pre>
-<p>再重启进入Windows 10就发现已经解决了。</p>
-<p>详细的原因和解释参考这篇文章：https://blog.csdn.net/daipilin/article/details/77887630</p>
+<p>安装好后在<code>dash</code>中搜索<code>virtualbox</code>，点击打开</p>
+<img src="http://img.cjh.zone/1544498109127.png" alt="1544498109127" width=500>
+<h2 id="创建一个虚拟机">创建一个虚拟机</h2>
+<p>点击<code>新建</code>，输入<code>名称</code>，选择你要安装的操作系统<code>类型</code>和<code>版本</code>，点击<code>下一步</code></p>
+<img src="http://img.cjh.zone/1544498217781.png" alt="1544498217781" width=500>
+<p>设置虚拟机的内存大小，我设置了2048M（2G）内存，这个后面可以更改，点击<code>下一步</code></p>
+<img src="http://img.cjh.zone/1544498318129.png" alt="1544498318129" width=500>
+<p>向导会提示你创建磁盘，如果之前没装过就选择<code>现在创建虚拟磁盘</code>，点击<code>创建</code>，一般都选这个啦，如果你之前装过就不会点进来看啦～</p>
+<img src="http://img.cjh.zone/1544498449456.png" alt="1544498449456" width=500>
+<p>选择默认的VDI，点击<code>下一步</code></p>
+<img src="http://img.cjh.zone/1544498475269.png" alt="1544498475269" width=500>
+<p>选择<code>动态分配</code>，点击<code>下一步</code></p>
+<img src="http://img.cjh.zone/1544498521246.png" alt="1544498521246" width=500>
+<p>选择虚拟硬盘的<code>保存位置</code>和<code>虚拟硬盘大小</code></p>
+<blockquote>
+<p>这里的保存位置默认是：/home/username/VirtualBox VMs/</p>
+<p>虚拟硬盘大小：其实可以设置大一点，因为上一步选择的是<code>动态分配</code>，所以j假设即使你这里设置了30G，VirtualBox并不会立即从你的物理磁盘划出30G作为虚拟硬盘，而是你用一点它分配一点、用一点它分配一点，但是最大能分配的空间是30G</p>
+</blockquote>
+<img src="http://img.cjh.zone/1544498921544.png" alt="1544498921544" width=500>
+<p>到此为止，一个虚拟机就创建完成了！</p>
+<h2 id="安装window">安装Window</h2>
+<ul>
+<li>
+<p><strong>加载ISO镜像</strong></p>
+<p>回到VirtualBox管理器主界面，点击<code>设置</code>—&gt;<code>存储</code>—&gt;<code>控制器:SATA</code>—&gt;第二个选项<code>没有盘片</code></p>
+<p>在右边的<code>属性</code>栏的右边有个小光盘图标，点击它，选择<code>选择一个虚拟光盘文件</code>，在弹出的框框里选择你的ISO镜像文件，没有的话可以<a href="/2018/11/20/%E5%85%B1%E4%BA%AB%E4%B8%80%E4%BA%9B%E8%B5%84%E6%BA%90/"><strong>点击这里</strong></a>去<code>MSDN，I Tell You</code>下载</p>
+<img src="http://img.cjh.zone/1544499727086.png" alt="1544499727086" width=500>
+<p>点击<code>确定</code></p>
+</li>
+<li>
+<p><strong>安装Win10</strong></p>
+<p>回到VirtualBox管理器主界面，选择刚才创建的虚拟机，点击<code>启动</code></p>
+<p>然后一步步傻瓜式的安装就行啦</p>
+<img src="http://img.cjh.zone/1544500096695.png" alt="1544500096695" width=500>
+</li>
+</ul>
+<h2 id="常用设置">常用设置</h2>
+<p>设置<code>双向共享粘贴板</code>和<code>双向拖放</code></p>
+<img src="http://img.cjh.zone/1544503644740.png" alt="1544503644740" width=600>
 
               </div>
               <div class="toc-container">
-                
+                <ul class="markdownIt-TOC">
+<li>
+<ul>
+<li><a href="#%E5%AE%89%E8%A3%85virtualbox">安装virtualbox</a></li>
+<li><a href="#%E5%88%9B%E5%BB%BA%E4%B8%80%E4%B8%AA%E8%99%9A%E6%8B%9F%E6%9C%BA">创建一个虚拟机</a></li>
+<li><a href="#%E5%AE%89%E8%A3%85window">安装Window</a></li>
+<li><a href="#%E5%B8%B8%E7%94%A8%E8%AE%BE%E7%BD%AE">常用设置</a></li>
+</ul>
+</li>
+</ul>
+
               </div>
             </div>
           </article>
@@ -129,9 +168,9 @@ sudo nptdate time.windows.com
         
           <div class="next-post">
             <div class="next">下一篇</div>
-            <a href="https://jianhuchen-test.github.io//post/ubuntu_ss_config">
+            <a href="https://jianhuchen-test.github.io//post/ubuntu_window_center">
               <h3 class="post-title">
-                科学上网-Linux(Ubuntu 16.04)配置shadowsocks客户端
+                Ubuntu中让打开的程序窗口居中
               </h3>
             </a>
           </div>

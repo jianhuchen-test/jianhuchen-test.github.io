@@ -2,13 +2,64 @@
 <feed xmlns="http://www.w3.org/2005/Atom">
     <id>https://jianhuchen-test.github.io/</id>
     <title>不想长大的石头</title>
-    <updated>2019-11-20T04:11:41.454Z</updated>
+    <updated>2019-11-20T04:27:25.896Z</updated>
     <generator>https://github.com/jpmonette/feed</generator>
     <link rel="alternate" href="https://jianhuchen-test.github.io/"/>
     <link rel="self" href="https://jianhuchen-test.github.io//atom.xml"/>
     <logo>https://jianhuchen-test.github.io//images/avatar.png</logo>
     <icon>https://jianhuchen-test.github.io//favicon.ico</icon>
     <rights>All rights reserved 2019, 不想长大的石头</rights>
+    <entry>
+        <title type="html"><![CDATA[Ubuntu16.04安装Windows虚拟机]]></title>
+        <id>https://jianhuchen-test.github.io//post/ubuntu1604_vm_install</id>
+        <link href="https://jianhuchen-test.github.io//post/ubuntu1604_vm_install">
+        </link>
+        <updated>2018-12-11T03:00:43.000Z</updated>
+        <content type="html"><![CDATA[<p>装好Ubuntu之后，大部分时间都是在使用Ubuntu了，但是无奈有些软件只能在Windows平台使用，来回切换双系统实在是麻烦，于是想着在Ubuntu上装个Windows的虚拟机，这里记录下安装过程，留给自己以后需要再安装时查看，也给大家参考～</p>
+<h2 id="安装virtualbox">安装virtualbox</h2>
+<pre><code class="language-shell">$ sudo apt-get install virtualbox
+</code></pre>
+<p>安装好后在<code>dash</code>中搜索<code>virtualbox</code>，点击打开</p>
+<img src="http://img.cjh.zone/1544498109127.png" alt="1544498109127" width=500>
+<h2 id="创建一个虚拟机">创建一个虚拟机</h2>
+<p>点击<code>新建</code>，输入<code>名称</code>，选择你要安装的操作系统<code>类型</code>和<code>版本</code>，点击<code>下一步</code></p>
+<img src="http://img.cjh.zone/1544498217781.png" alt="1544498217781" width=500>
+<p>设置虚拟机的内存大小，我设置了2048M（2G）内存，这个后面可以更改，点击<code>下一步</code></p>
+<img src="http://img.cjh.zone/1544498318129.png" alt="1544498318129" width=500>
+<p>向导会提示你创建磁盘，如果之前没装过就选择<code>现在创建虚拟磁盘</code>，点击<code>创建</code>，一般都选这个啦，如果你之前装过就不会点进来看啦～</p>
+<img src="http://img.cjh.zone/1544498449456.png" alt="1544498449456" width=500>
+<p>选择默认的VDI，点击<code>下一步</code></p>
+<img src="http://img.cjh.zone/1544498475269.png" alt="1544498475269" width=500>
+<p>选择<code>动态分配</code>，点击<code>下一步</code></p>
+<img src="http://img.cjh.zone/1544498521246.png" alt="1544498521246" width=500>
+<p>选择虚拟硬盘的<code>保存位置</code>和<code>虚拟硬盘大小</code></p>
+<blockquote>
+<p>这里的保存位置默认是：/home/username/VirtualBox VMs/</p>
+<p>虚拟硬盘大小：其实可以设置大一点，因为上一步选择的是<code>动态分配</code>，所以j假设即使你这里设置了30G，VirtualBox并不会立即从你的物理磁盘划出30G作为虚拟硬盘，而是你用一点它分配一点、用一点它分配一点，但是最大能分配的空间是30G</p>
+</blockquote>
+<img src="http://img.cjh.zone/1544498921544.png" alt="1544498921544" width=500>
+<p>到此为止，一个虚拟机就创建完成了！</p>
+<h2 id="安装window">安装Window</h2>
+<ul>
+<li>
+<p><strong>加载ISO镜像</strong></p>
+<p>回到VirtualBox管理器主界面，点击<code>设置</code>—&gt;<code>存储</code>—&gt;<code>控制器:SATA</code>—&gt;第二个选项<code>没有盘片</code></p>
+<p>在右边的<code>属性</code>栏的右边有个小光盘图标，点击它，选择<code>选择一个虚拟光盘文件</code>，在弹出的框框里选择你的ISO镜像文件，没有的话可以<a href="/2018/11/20/%E5%85%B1%E4%BA%AB%E4%B8%80%E4%BA%9B%E8%B5%84%E6%BA%90/"><strong>点击这里</strong></a>去<code>MSDN，I Tell You</code>下载</p>
+<img src="http://img.cjh.zone/1544499727086.png" alt="1544499727086" width=500>
+<p>点击<code>确定</code></p>
+</li>
+<li>
+<p><strong>安装Win10</strong></p>
+<p>回到VirtualBox管理器主界面，选择刚才创建的虚拟机，点击<code>启动</code></p>
+<p>然后一步步傻瓜式的安装就行啦</p>
+<img src="http://img.cjh.zone/1544500096695.png" alt="1544500096695" width=500>
+</li>
+</ul>
+<h2 id="常用设置">常用设置</h2>
+<p>设置<code>双向共享粘贴板</code>和<code>双向拖放</code></p>
+<img src="http://img.cjh.zone/1544503644740.png" alt="1544503644740" width=600>
+]]></content>
+    </entry>
     <entry>
         <title type="html"><![CDATA[Ubuntu中让打开的程序窗口居中]]></title>
         <id>https://jianhuchen-test.github.io//post/ubuntu_window_center</id>
@@ -33,6 +84,154 @@
 </li>
 </ol>
 <img src="http://img.cjh.zone/center.png" alt="center" width=400>
+]]></content>
+    </entry>
+    <entry>
+        <title type="html"><![CDATA[ubuntu16.04安装TensorFlow-GPU]]></title>
+        <id>https://jianhuchen-test.github.io//post/ubuntu1604_tensorflow_gpu_install</id>
+        <link href="https://jianhuchen-test.github.io//post/ubuntu1604_tensorflow_gpu_install">
+        </link>
+        <updated>2018-11-28T05:35:45.000Z</updated>
+        <content type="html"><![CDATA[<h2 id="一些废话">一些废话</h2>
+<p>我感觉我的安装过程还是比较顺利哒，上午十一点多开始安装，到十二点多就安装好了，顺便写下了这篇记录，供大家做参考吧，也方便日后自己重装系统（呀！手欠！！）之后安装的时候还能再看看</p>
+<p>我在我的笔记本上装的，虽然笔记本上跑GPU有点赶鸭子上架的感觉，但总比在cpu上硬跑好一丢丢，有时候确实会方便很多</p>
+<p>我的系统：Ubuntu16.04，GPU：GeForce GTX 850M</p>
+<p>开始正题...</p>
+<h2 id="硬件需求">硬件需求</h2>
+<p>根据<a href="https://www.tensorflow.org/install/gpu">tensorflow官方文档</a>，tensorflow-gpu版本只能在下面的显卡上面跑：</p>
+<ul>
+<li>具有CUDA®计算能力3.5或更高版本的NVIDIA®GPU卡。请参阅<a href="https://developer.nvidia.com/cuda-gpus">支持CUDA的GPU卡</a>列表 。</li>
+</ul>
+<p>是的，只有N卡...</p>
+<h2 id="软件需求">软件需求</h2>
+<p>根据<a href="https://www.tensorflow.org/install/gpu">tensorflow官方文档</a>，需要以下几个软件：NVIDIA驱动、Nvidia CUDA9.0、cuDNN SDK (&gt;= 7.2)，接下来咱们一个个的安装</p>
+<h3 id="nvidia驱动">NVIDIA驱动</h3>
+<ul>
+<li>NVIDIA® GPU drivers —CUDA 9.0 requires 384.x or higher.<br>
+英伟达的显卡驱动，待会儿咱们要安装CUDA，版本为9.0，所以需要你的驱动版本在384.*或者更高</li>
+</ul>
+<h4 id="安装">安装</h4>
+<p>这里是一种最简单的方法，因为桌面版的Ubuntu比较方便可以直接使用系统设置完成。</p>
+<p>首先打开terminal，输入</p>
+<pre><code class="language-shell">sudo apt-get update
+</code></pre>
+<p>然后，打开<code>系统设置</code>-&gt;<code>软件和更新</code>-&gt;<code>附加驱动</code>-&gt;<code>选择合适的版本安装</code>，这个安装完成之后需要重启电脑</p>
+<img src="http://img.cjh.zone/NVIDIA_drivers_v384_or_higher.png" alt="NVIDIA_drivers_v384_or_higher" width=400>
+<h4 id="验证是否安装成功">验证是否安装成功</h4>
+<p>重启之后在terminal里输入</p>
+<pre><code class="language-shell">nvidia-smi
+</code></pre>
+<p>出现下面的类似情况表示安装成功</p>
+<img src="http://img.cjh.zone/driver_install_success.png" alt="driver_install_success" width=400>
+<p>可以看到，我的版本是384.130，满足要求！</p>
+<h3 id="nvidia-cuda90">Nvidia CUDA9.0</h3>
+<h4 id="安装-2">安装</h4>
+<p>CUDA9.0:下载地址：<a href="https://developer.nvidia.com/cuda-toolkit-archive">https://developer.nvidia.com/cuda-toolkit-archive</a></p>
+<img src="http://img.cjh.zone/CUDA-download.png" alt="CUDA-download" width=400>
+<p>我下载的是**<code>.deb</code>的本地安装包**，下载完成后的安装方法：</p>
+<pre><code class="language-bash"># 首先切换到你存放安装包的地方，一般默认放在用户的Download文件夹下
+cd ~/Downloads/
+sudo dpkg -i cuda-repo-ubuntu1604-9-0-local_9.0.176-1_amd64.deb
+# 注意这里的&lt;version&gt;，表示你安装的版本，所以这里我要替换成9-0-local
+# 如果你不知道你的版本该怎么写，那就cd到/var路径下看看这个文件夹的名字吧，名字里面有版本号
+sudo apt-key add /var/cuda-repo-&lt;version&gt;/7fa2af80.pub
+# 我对应的替换掉版本号之后的命令：
+# sudo apt-key add /var/cuda-repo-9-0-local/7fa2af80.pub
+sudo apt-get update
+sudo apt-get install cuda
+</code></pre>
+<h4 id="添加环境变量">添加环境变量</h4>
+<p>安装完成之后需要添加环境变量，具体方法如下：</p>
+<pre><code class="language-shell"># 用gedit打开这个文件，在他后面追加内容
+gedit ~/.bashrc
+</code></pre>
+<p>在末尾追加内容如下：</p>
+<pre><code class="language-shell"># cuda
+export PATH=/usr/local/cuda-9.0/bin${PATH:+:${PATH}}
+export LD_LIBRARY_PATH=/usr/local/cuda-9.0/lib64${LD_LIBRARY_PATH:+:${LD_LIBRARY_PATH}}
+</code></pre>
+<p>如下图所示</p>
+<img src="http://img.cjh.zone/add-cuda-path.png" alt="add-cuda-path" width=400>
+<p>然后打开terminal，使用<code>source ~/.bashrc</code>，使我们刚才的更改立即生效</p>
+<pre><code class="language-shell">source ~/.bashrc
+</code></pre>
+<h4 id="验证是否安装成功-2">验证是否安装成功</h4>
+<pre><code class="language-shell">nvcc -V
+</code></pre>
+<p>如果出现下图类似的提示表示安装成功</p>
+<img src="http://img.cjh.zone/cuda-install-success.png" alt="cuda-install-success" width=400>
+<h3 id="cudnn-sdk-72">cuDNN SDK (&gt;= 7.2)</h3>
+<p>下载cudnn：https://developer.nvidia.com/rdp/cudnn-download</p>
+<blockquote>
+<p>注意：上面的操作需要登录，如果没有账号的话就注册一个</p>
+</blockquote>
+<p>cuDNN软件开发工具包，<a href="https://www.tensorflow.org/install/gpu">tensorflow官方</a>要求它的版本&gt;=7.2，注意还要与<strong>CUDA的版本</strong>对应哦～</p>
+<img src="http://img.cjh.zone/cudnn.png" alt="cudnn" width=400>
+<h4 id="安装-3">安装</h4>
+<p>这里的安装过程跟我在windows上安装cuDNN的过程基本一样，就是复制文件...</p>
+<pre><code class="language-shell"># 首先切换到你存放cuDNN安装包的地方，一般默认放在用户的Download文件夹下
+cd ~/Downloads/
+# 解压下载的cuDNN压缩包
+tar xvzf cudnn-9.0-linux-x64-v7.4.1.5.tgz
+# 将解压的文件复制到对应的cuda的安装路径下，复制完解压的文件就可以删掉了
+sudo cp cuda/include/cudnn.h /usr/local/cuda/include
+sudo cp cuda/lib64/libcudnn* /usr/local/cuda/lib64
+# 所有用户添加读权限
+sudo chmod a+r /usr/local/cuda/include/cudnn.h /usr/local/cuda/lib64/libcudnn*
+</code></pre>
+<p>桌面版的Ubuntu中，以上操作其实都可以使用鼠标点击完成...</p>
+<h2 id="tensorflow-gpu">tensorflow-gpu</h2>
+<p>我使用pip直接安装，安装之前需要你确认你的系统里面有<code>python3</code>和对应的<code>pip</code>（ubuntu 16.04默认安装<code>Python 2.7.12</code>和<code>Python 3.5.2</code>），验证方法如下：</p>
+<p>验证python3：</p>
+<pre><code class="language-shell">python3 -V
+# 显示出版本号就表示已经安装了
+</code></pre>
+<p>验证pip3：</p>
+<pre><code class="language-shell">pip3 -V
+# 显示出版本号就表示已经安装了
+# Ubuntu默认没有安装pip，如果你也没有安装，可以使用下面的命令安装
+sudo apt-get install python3-pip
+</code></pre>
+<h3 id="安装-4">安装</h3>
+<pre><code class="language-shell"># 指定阿里镜像源，听说会快好多
+sudo pip3 install --index-url https://mirrors.aliyun.com/pypi/simple tensorflow-gpu
+</code></pre>
+<img src="http://img.cjh.zone/install-tensorflow-gpu.png" alt="install-tensorflow-gpu" width=400>
+<h3 id="验证否安装成功">验证否安装成功</h3>
+<p>这里我使用<a href="https://www.tensorflow.org/guide/using_gpu">官网的例子</a>来测试一下</p>
+<p>到桌面新建一个<code>tensorflow-gpu-test.py</code>文件，然后填上如下内容：</p>
+<pre><code class="language-python">import tensorflow as tf
+
+# Creates a graph.
+a = tf.constant([1.0, 2.0, 3.0, 4.0, 5.0, 6.0], shape=[2, 3], name='a')
+b = tf.constant([1.0, 2.0, 3.0, 4.0, 5.0, 6.0], shape=[3, 2], name='b')
+c = tf.matmul(a, b)
+
+# Creates a session with log_device_placement set to True.
+sess = tf.Session(config=tf.ConfigProto(log_device_placement=True))
+
+# Runs the op.
+print(sess.run(c))
+</code></pre>
+<p>打开terminal，执行一下刚才的程序</p>
+<pre><code class="language-shell">python3 ~/Desktop/tensorflow-gpu-test.py
+</code></pre>
+<p>如果你看到如下的效果就表示安装成功啦～</p>
+<pre><code class="language-shell">Device mapping:
+/job:localhost/replica:0/task:0/device:GPU:0 -&gt; device: 0, name: Tesla K40c, pci bus
+id: 0000:05:00.0
+b: /job:localhost/replica:0/task:0/device:GPU:0
+a: /job:localhost/replica:0/task:0/device:GPU:0
+MatMul: /job:localhost/replica:0/task:0/device:GPU:0
+[[ 22.  28.]
+ [ 49.  64.]]
+</code></pre>
+<img src="http://img.cjh.zone/test.png" alt="test" width=400>
+<p>参考资料：</p>
+<p>https://www.tensorflow.org/install/gpu</p>
+<p>https://github.com/tensorflow/tensorflow/blob/master/README.md</p>
+<p>http://blog.51cto.com/moerjinrong/2175362</p>
+<p>https://blog.csdn.net/zhaoyu106/article/details/52793183</p>
 ]]></content>
     </entry>
     <entry>

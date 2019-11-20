@@ -1,0 +1,379 @@
+<html>
+  <head>
+    <meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>ubuntu16.04安装TensorFlow-GPU | 不想长大的石头</title>
+<meta name="description" content="" />
+<link rel="shortcut icon" href="https://jianhuchen-test.github.io//favicon.ico?v=1574224041724">
+<link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.7.2/css/all.css" integrity="sha384-fnmOCqbTlWIlj8LyTjo7mOUStjsKC4pOpQbqyi7RrhN7udi9RwhKkMHpvLbHG9Sr" crossorigin="anonymous">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.10.0/katex.min.css">
+<link rel="stylesheet" href="https://jianhuchen-test.github.io//styles/main.css">
+
+<script src="https://cdn.bootcss.com/highlight.js/9.12.0/highlight.min.js"></script>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Droid+Serif:400,700">
+
+
+
+  </head>
+  <body>
+    <div class="main">
+      <div class="main-content">
+        <div class="site-header">
+  <a href="https://jianhuchen-test.github.io/">
+  <img class="avatar" src="https://jianhuchen-test.github.io//images/avatar.png?v=1574224041724" alt="">
+  </a>
+  <h1 class="site-title">
+    不想长大的石头
+  </h1>
+  <p class="site-description">
+    
+  </p>
+  <div class="menu-container">
+    
+      
+        <a href="/" class="menu">
+          🌈首页
+        </a>
+      
+    
+      
+        <a href="/archives" class="menu">
+          📃 归档
+        </a>
+      
+    
+      
+        <a href="/tags" class="menu">
+          🏷 标签
+        </a>
+      
+    
+      
+        <a href="/post/about" class="menu">
+          👨‍💻 关于 &amp; 留言
+        </a>
+      
+    
+      
+        <a href="/post/share/" class="menu">
+          👏 共享资源
+        </a>
+      
+    
+      
+        <a href="/post/friends/" class="menu">
+          🍻友链
+        </a>
+      
+    
+  </div>
+  <div class="social-container">
+    
+      
+        <a href="https://github.com/jianhuchen" target="_blank">
+          <i class="fab fa-github"></i>
+        </a>
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+  </div>
+</div>
+
+        <div class="post-detail">
+          <article class="post">
+            <h2 class="post-title">
+              ubuntu16.04安装TensorFlow-GPU
+            </h2>
+            <div class="post-info">
+              <span>
+                2018-11-28
+              </span>
+              <span>
+                6 min read
+              </span>
+              
+            </div>
+            
+            <div class="post-content-wrapper">
+              <div class="post-content">
+                <h2 id="一些废话">一些废话</h2>
+<p>我感觉我的安装过程还是比较顺利哒，上午十一点多开始安装，到十二点多就安装好了，顺便写下了这篇记录，供大家做参考吧，也方便日后自己重装系统（呀！手欠！！）之后安装的时候还能再看看</p>
+<p>我在我的笔记本上装的，虽然笔记本上跑GPU有点赶鸭子上架的感觉，但总比在cpu上硬跑好一丢丢，有时候确实会方便很多</p>
+<p>我的系统：Ubuntu16.04，GPU：GeForce GTX 850M</p>
+<p>开始正题...</p>
+<h2 id="硬件需求">硬件需求</h2>
+<p>根据<a href="https://www.tensorflow.org/install/gpu">tensorflow官方文档</a>，tensorflow-gpu版本只能在下面的显卡上面跑：</p>
+<ul>
+<li>具有CUDA®计算能力3.5或更高版本的NVIDIA®GPU卡。请参阅<a href="https://developer.nvidia.com/cuda-gpus">支持CUDA的GPU卡</a>列表 。</li>
+</ul>
+<p>是的，只有N卡...</p>
+<h2 id="软件需求">软件需求</h2>
+<p>根据<a href="https://www.tensorflow.org/install/gpu">tensorflow官方文档</a>，需要以下几个软件：NVIDIA驱动、Nvidia CUDA9.0、cuDNN SDK (&gt;= 7.2)，接下来咱们一个个的安装</p>
+<h3 id="nvidia驱动">NVIDIA驱动</h3>
+<ul>
+<li>NVIDIA® GPU drivers —CUDA 9.0 requires 384.x or higher.<br>
+英伟达的显卡驱动，待会儿咱们要安装CUDA，版本为9.0，所以需要你的驱动版本在384.*或者更高</li>
+</ul>
+<h4 id="安装">安装</h4>
+<p>这里是一种最简单的方法，因为桌面版的Ubuntu比较方便可以直接使用系统设置完成。</p>
+<p>首先打开terminal，输入</p>
+<pre><code class="language-shell">sudo apt-get update
+</code></pre>
+<p>然后，打开<code>系统设置</code>-&gt;<code>软件和更新</code>-&gt;<code>附加驱动</code>-&gt;<code>选择合适的版本安装</code>，这个安装完成之后需要重启电脑</p>
+<img src="http://img.cjh.zone/NVIDIA_drivers_v384_or_higher.png" alt="NVIDIA_drivers_v384_or_higher" width=400>
+<h4 id="验证是否安装成功">验证是否安装成功</h4>
+<p>重启之后在terminal里输入</p>
+<pre><code class="language-shell">nvidia-smi
+</code></pre>
+<p>出现下面的类似情况表示安装成功</p>
+<img src="http://img.cjh.zone/driver_install_success.png" alt="driver_install_success" width=400>
+<p>可以看到，我的版本是384.130，满足要求！</p>
+<h3 id="nvidia-cuda90">Nvidia CUDA9.0</h3>
+<h4 id="安装-2">安装</h4>
+<p>CUDA9.0:下载地址：<a href="https://developer.nvidia.com/cuda-toolkit-archive">https://developer.nvidia.com/cuda-toolkit-archive</a></p>
+<img src="http://img.cjh.zone/CUDA-download.png" alt="CUDA-download" width=400>
+<p>我下载的是**<code>.deb</code>的本地安装包**，下载完成后的安装方法：</p>
+<pre><code class="language-bash"># 首先切换到你存放安装包的地方，一般默认放在用户的Download文件夹下
+cd ~/Downloads/
+sudo dpkg -i cuda-repo-ubuntu1604-9-0-local_9.0.176-1_amd64.deb
+# 注意这里的&lt;version&gt;，表示你安装的版本，所以这里我要替换成9-0-local
+# 如果你不知道你的版本该怎么写，那就cd到/var路径下看看这个文件夹的名字吧，名字里面有版本号
+sudo apt-key add /var/cuda-repo-&lt;version&gt;/7fa2af80.pub
+# 我对应的替换掉版本号之后的命令：
+# sudo apt-key add /var/cuda-repo-9-0-local/7fa2af80.pub
+sudo apt-get update
+sudo apt-get install cuda
+</code></pre>
+<h4 id="添加环境变量">添加环境变量</h4>
+<p>安装完成之后需要添加环境变量，具体方法如下：</p>
+<pre><code class="language-shell"># 用gedit打开这个文件，在他后面追加内容
+gedit ~/.bashrc
+</code></pre>
+<p>在末尾追加内容如下：</p>
+<pre><code class="language-shell"># cuda
+export PATH=/usr/local/cuda-9.0/bin${PATH:+:${PATH}}
+export LD_LIBRARY_PATH=/usr/local/cuda-9.0/lib64${LD_LIBRARY_PATH:+:${LD_LIBRARY_PATH}}
+</code></pre>
+<p>如下图所示</p>
+<img src="http://img.cjh.zone/add-cuda-path.png" alt="add-cuda-path" width=400>
+<p>然后打开terminal，使用<code>source ~/.bashrc</code>，使我们刚才的更改立即生效</p>
+<pre><code class="language-shell">source ~/.bashrc
+</code></pre>
+<h4 id="验证是否安装成功-2">验证是否安装成功</h4>
+<pre><code class="language-shell">nvcc -V
+</code></pre>
+<p>如果出现下图类似的提示表示安装成功</p>
+<img src="http://img.cjh.zone/cuda-install-success.png" alt="cuda-install-success" width=400>
+<h3 id="cudnn-sdk-72">cuDNN SDK (&gt;= 7.2)</h3>
+<p>下载cudnn：https://developer.nvidia.com/rdp/cudnn-download</p>
+<blockquote>
+<p>注意：上面的操作需要登录，如果没有账号的话就注册一个</p>
+</blockquote>
+<p>cuDNN软件开发工具包，<a href="https://www.tensorflow.org/install/gpu">tensorflow官方</a>要求它的版本&gt;=7.2，注意还要与<strong>CUDA的版本</strong>对应哦～</p>
+<img src="http://img.cjh.zone/cudnn.png" alt="cudnn" width=400>
+<h4 id="安装-3">安装</h4>
+<p>这里的安装过程跟我在windows上安装cuDNN的过程基本一样，就是复制文件...</p>
+<pre><code class="language-shell"># 首先切换到你存放cuDNN安装包的地方，一般默认放在用户的Download文件夹下
+cd ~/Downloads/
+# 解压下载的cuDNN压缩包
+tar xvzf cudnn-9.0-linux-x64-v7.4.1.5.tgz
+# 将解压的文件复制到对应的cuda的安装路径下，复制完解压的文件就可以删掉了
+sudo cp cuda/include/cudnn.h /usr/local/cuda/include
+sudo cp cuda/lib64/libcudnn* /usr/local/cuda/lib64
+# 所有用户添加读权限
+sudo chmod a+r /usr/local/cuda/include/cudnn.h /usr/local/cuda/lib64/libcudnn*
+</code></pre>
+<p>桌面版的Ubuntu中，以上操作其实都可以使用鼠标点击完成...</p>
+<h2 id="tensorflow-gpu">tensorflow-gpu</h2>
+<p>我使用pip直接安装，安装之前需要你确认你的系统里面有<code>python3</code>和对应的<code>pip</code>（ubuntu 16.04默认安装<code>Python 2.7.12</code>和<code>Python 3.5.2</code>），验证方法如下：</p>
+<p>验证python3：</p>
+<pre><code class="language-shell">python3 -V
+# 显示出版本号就表示已经安装了
+</code></pre>
+<p>验证pip3：</p>
+<pre><code class="language-shell">pip3 -V
+# 显示出版本号就表示已经安装了
+# Ubuntu默认没有安装pip，如果你也没有安装，可以使用下面的命令安装
+sudo apt-get install python3-pip
+</code></pre>
+<h3 id="安装-4">安装</h3>
+<pre><code class="language-shell"># 指定阿里镜像源，听说会快好多
+sudo pip3 install --index-url https://mirrors.aliyun.com/pypi/simple tensorflow-gpu
+</code></pre>
+<img src="http://img.cjh.zone/install-tensorflow-gpu.png" alt="install-tensorflow-gpu" width=400>
+<h3 id="验证否安装成功">验证否安装成功</h3>
+<p>这里我使用<a href="https://www.tensorflow.org/guide/using_gpu">官网的例子</a>来测试一下</p>
+<p>到桌面新建一个<code>tensorflow-gpu-test.py</code>文件，然后填上如下内容：</p>
+<pre><code class="language-python">import tensorflow as tf
+
+# Creates a graph.
+a = tf.constant([1.0, 2.0, 3.0, 4.0, 5.0, 6.0], shape=[2, 3], name='a')
+b = tf.constant([1.0, 2.0, 3.0, 4.0, 5.0, 6.0], shape=[3, 2], name='b')
+c = tf.matmul(a, b)
+
+# Creates a session with log_device_placement set to True.
+sess = tf.Session(config=tf.ConfigProto(log_device_placement=True))
+
+# Runs the op.
+print(sess.run(c))
+</code></pre>
+<p>打开terminal，执行一下刚才的程序</p>
+<pre><code class="language-shell">python3 ~/Desktop/tensorflow-gpu-test.py
+</code></pre>
+<p>如果你看到如下的效果就表示安装成功啦～</p>
+<pre><code class="language-shell">Device mapping:
+/job:localhost/replica:0/task:0/device:GPU:0 -&gt; device: 0, name: Tesla K40c, pci bus
+id: 0000:05:00.0
+b: /job:localhost/replica:0/task:0/device:GPU:0
+a: /job:localhost/replica:0/task:0/device:GPU:0
+MatMul: /job:localhost/replica:0/task:0/device:GPU:0
+[[ 22.  28.]
+ [ 49.  64.]]
+</code></pre>
+<img src="http://img.cjh.zone/test.png" alt="test" width=400>
+<p>参考资料：</p>
+<p>https://www.tensorflow.org/install/gpu</p>
+<p>https://github.com/tensorflow/tensorflow/blob/master/README.md</p>
+<p>http://blog.51cto.com/moerjinrong/2175362</p>
+<p>https://blog.csdn.net/zhaoyu106/article/details/52793183</p>
+
+              </div>
+              <div class="toc-container">
+                <ul class="markdownIt-TOC">
+<li>
+<ul>
+<li><a href="#%E4%B8%80%E4%BA%9B%E5%BA%9F%E8%AF%9D">一些废话</a></li>
+<li><a href="#%E7%A1%AC%E4%BB%B6%E9%9C%80%E6%B1%82">硬件需求</a></li>
+<li><a href="#%E8%BD%AF%E4%BB%B6%E9%9C%80%E6%B1%82">软件需求</a>
+<ul>
+<li><a href="#nvidia%E9%A9%B1%E5%8A%A8">NVIDIA驱动</a>
+<ul>
+<li><a href="#%E5%AE%89%E8%A3%85">安装</a></li>
+<li><a href="#%E9%AA%8C%E8%AF%81%E6%98%AF%E5%90%A6%E5%AE%89%E8%A3%85%E6%88%90%E5%8A%9F">验证是否安装成功</a></li>
+</ul>
+</li>
+<li><a href="#nvidia-cuda90">Nvidia CUDA9.0</a>
+<ul>
+<li><a href="#%E5%AE%89%E8%A3%85-2">安装</a></li>
+<li><a href="#%E6%B7%BB%E5%8A%A0%E7%8E%AF%E5%A2%83%E5%8F%98%E9%87%8F">添加环境变量</a></li>
+<li><a href="#%E9%AA%8C%E8%AF%81%E6%98%AF%E5%90%A6%E5%AE%89%E8%A3%85%E6%88%90%E5%8A%9F-2">验证是否安装成功</a></li>
+</ul>
+</li>
+<li><a href="#cudnn-sdk-72">cuDNN SDK (&gt;= 7.2)</a>
+<ul>
+<li><a href="#%E5%AE%89%E8%A3%85-3">安装</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li><a href="#tensorflow-gpu">tensorflow-gpu</a>
+<ul>
+<li><a href="#%E5%AE%89%E8%A3%85-4">安装</a></li>
+<li><a href="#%E9%AA%8C%E8%AF%81%E5%90%A6%E5%AE%89%E8%A3%85%E6%88%90%E5%8A%9F">验证否安装成功</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+
+              </div>
+            </div>
+          </article>
+        </div>
+
+        
+          <div class="next-post">
+            <div class="next">下一篇</div>
+            <a href="https://jianhuchen-test.github.io//post/windows_ubuntu_time_synchronize">
+              <h3 class="post-title">
+                Windows与Ubuntu时间不同步的解决方案
+              </h3>
+            </a>
+          </div>
+        
+
+        
+          
+            <link rel="stylesheet" href="https://unpkg.com/gitalk/dist/gitalk.css">
+<script src="https://unpkg.com/gitalk/dist/gitalk.min.js"></script>
+
+<div id="gitalk-container"></div>
+
+<script>
+
+  var gitalk = new Gitalk({
+    clientID: '13244a83a82befebfcfd',
+    clientSecret: 'c583df657426ac6aa4051674839478a647b5ae96',
+    repo: 'jianhuchen-test.github.io',
+    owner: 'jianhuchen-test',
+    admin: ['jianhuchen-test'],
+    id: (location.pathname).substring(0, 49),      // Ensure uniqueness and length less than 50
+    distractionFreeMode: false  // Facebook-like distraction free mode
+  })
+
+  gitalk.render('gitalk-container')
+
+</script>
+
+          
+
+          
+        
+
+        <div class="site-footer">
+   | 
+  <a class="rss" href="https://jianhuchen-test.github.io//atom.xml" target="_blank">RSS</a>
+</div>
+
+<script>
+  hljs.initHighlightingOnLoad()
+
+  let mainNavLinks = document.querySelectorAll(".markdownIt-TOC a");
+
+  // This should probably be throttled.
+  // Especially because it triggers during smooth scrolling.
+  // https://lodash.com/docs/4.17.10#throttle
+  // You could do like...
+  // window.addEventListener("scroll", () => {
+  //    _.throttle(doThatStuff, 100);
+  // });
+  // Only not doing it here to keep this Pen dependency-free.
+
+  window.addEventListener("scroll", event => {
+    let fromTop = window.scrollY;
+
+    mainNavLinks.forEach((link, index) => {
+      let section = document.getElementById(decodeURI(link.hash).substring(1));
+      let nextSection = null
+      if (mainNavLinks[index + 1]) {
+        nextSection = document.getElementById(decodeURI(mainNavLinks[index + 1].hash).substring(1));
+      }
+      if (section.offsetTop <= fromTop) {
+        if (nextSection) {
+          if (nextSection.offsetTop > fromTop) {
+            link.classList.add("current");
+          } else {
+            link.classList.remove("current");    
+          }
+        } else {
+          link.classList.add("current");
+        }
+      } else {
+        link.classList.remove("current");
+      }
+    });
+  });
+
+</script>
+
+      </div>
+    </div>
+  </body>
+</html>
