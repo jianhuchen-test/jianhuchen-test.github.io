@@ -2,7 +2,7 @@
   <head>
     <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
-<title>🍻 友情链接 | 不想长大的石头</title>
+<title>Windows与Ubuntu时间不同步的解决方案 | 不想长大的石头</title>
 <meta name="description" content="" />
 <link rel="shortcut icon" href="https://jianhuchen-test.github.io//favicon.ico?v=1574223097326">
 <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.7.2/css/all.css" integrity="sha384-fnmOCqbTlWIlj8LyTjo7mOUStjsKC4pOpQbqyi7RrhN7udi9RwhKkMHpvLbHG9Sr" crossorigin="anonymous">
@@ -89,11 +89,11 @@
         <div class="post-detail">
           <article class="post">
             <h2 class="post-title">
-              🍻 友情链接
+              Windows与Ubuntu时间不同步的解决方案
             </h2>
             <div class="post-info">
               <span>
-                2018-11-20
+                2018-11-26
               </span>
               <span>
                 1 min read
@@ -103,10 +103,20 @@
             
             <div class="post-content-wrapper">
               <div class="post-content">
-                <p><a href="http://keyanjie.net/">Alan Ke</a></p>
-<p><a href="http://www.windsings.com/">且听风吟</a></p>
-<p><a href="http://cjcongjia.cn/">从嘉(´ฅω•ฅ｀)</a></p>
-<p><a href="https://xq99.me/">冰水鉴心</a></p>
+                <p>装好Ubuntu之后再回到Windows发现两个系统的时间不同步，于是google了一下，我是按照下面的方法解决的，供大家参考~</p>
+<ol>
+<li>在ubuntu16.04下更新本地时间：</li>
+</ol>
+<pre><code class="language-bash">sudo apt-get install ntpdate
+sudo nptdate time.windows.com
+</code></pre>
+<ol start="2">
+<li>将本地时间更新到硬件上：</li>
+</ol>
+<pre><code class="language-bash">sudo hwclock --localtime --systohc
+</code></pre>
+<p>再重启进入Windows 10就发现已经解决了。</p>
+<p>详细的原因和解释参考这篇文章：https://blog.csdn.net/daipilin/article/details/77887630</p>
 
               </div>
               <div class="toc-container">
@@ -116,6 +126,15 @@
           </article>
         </div>
 
+        
+          <div class="next-post">
+            <div class="next">下一篇</div>
+            <a href="https://jianhuchen-test.github.io//post/ubuntu_ss_config">
+              <h3 class="post-title">
+                科学上网-Linux(Ubuntu 16.04)配置shadowsocks客户端
+              </h3>
+            </a>
+          </div>
         
 
         

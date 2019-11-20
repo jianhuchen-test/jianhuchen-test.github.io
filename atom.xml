@@ -2,13 +2,61 @@
 <feed xmlns="http://www.w3.org/2005/Atom">
     <id>https://jianhuchen-test.github.io/</id>
     <title>不想长大的石头</title>
-    <updated>2019-11-20T03:55:23.910Z</updated>
+    <updated>2019-11-20T04:11:41.454Z</updated>
     <generator>https://github.com/jpmonette/feed</generator>
     <link rel="alternate" href="https://jianhuchen-test.github.io/"/>
     <link rel="self" href="https://jianhuchen-test.github.io//atom.xml"/>
     <logo>https://jianhuchen-test.github.io//images/avatar.png</logo>
     <icon>https://jianhuchen-test.github.io//favicon.ico</icon>
     <rights>All rights reserved 2019, 不想长大的石头</rights>
+    <entry>
+        <title type="html"><![CDATA[Ubuntu中让打开的程序窗口居中]]></title>
+        <id>https://jianhuchen-test.github.io//post/ubuntu_window_center</id>
+        <link href="https://jianhuchen-test.github.io//post/ubuntu_window_center">
+        </link>
+        <updated>2018-12-05T12:00:43.000Z</updated>
+        <content type="html"><![CDATA[<p>每次在Ubuntu中打开新的窗口都会靠左上角显示，所以每次打开一个窗口都要多做一步操作，将窗口移到屏幕中间来，强迫症的我觉得太麻烦了，所以...</p>
+<ol>
+<li>
+<p>安装ccsm</p>
+<pre><code class="language-shell">$ sudo apt-get install compizconfig-settings-manager
+</code></pre>
+</li>
+<li>
+<p><strong><code>打开ccsm</code></strong></p>
+<pre><code class="language-shell">$ ccsm
+</code></pre>
+<img src="http://img.cjh.zone/ccsm.png" alt="ccsm" width=400>
+</li>
+<li>
+<p>选择**<code>放置窗口</code><strong>，在</strong><code>安置模式</code><strong>处选择</strong><code>居中</code>**</p>
+</li>
+</ol>
+<img src="http://img.cjh.zone/center.png" alt="center" width=400>
+]]></content>
+    </entry>
+    <entry>
+        <title type="html"><![CDATA[Windows与Ubuntu时间不同步的解决方案]]></title>
+        <id>https://jianhuchen-test.github.io//post/windows_ubuntu_time_synchronize</id>
+        <link href="https://jianhuchen-test.github.io//post/windows_ubuntu_time_synchronize">
+        </link>
+        <updated>2018-11-26T05:30:29.000Z</updated>
+        <content type="html"><![CDATA[<p>装好Ubuntu之后再回到Windows发现两个系统的时间不同步，于是google了一下，我是按照下面的方法解决的，供大家参考~</p>
+<ol>
+<li>在ubuntu16.04下更新本地时间：</li>
+</ol>
+<pre><code class="language-bash">sudo apt-get install ntpdate
+sudo nptdate time.windows.com
+</code></pre>
+<ol start="2">
+<li>将本地时间更新到硬件上：</li>
+</ol>
+<pre><code class="language-bash">sudo hwclock --localtime --systohc
+</code></pre>
+<p>再重启进入Windows 10就发现已经解决了。</p>
+<p>详细的原因和解释参考这篇文章：https://blog.csdn.net/daipilin/article/details/77887630</p>
+]]></content>
+    </entry>
     <entry>
         <title type="html"><![CDATA[科学上网-Linux(Ubuntu 16.04)配置shadowsocks客户端]]></title>
         <id>https://jianhuchen-test.github.io//post/ubuntu_ss_config</id>
