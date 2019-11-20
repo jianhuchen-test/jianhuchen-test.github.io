@@ -2,7 +2,7 @@
 <feed xmlns="http://www.w3.org/2005/Atom">
     <id>https://jianhuchen-test.github.io/</id>
     <title>不想长大的石头</title>
-    <updated>2019-11-20T04:27:25.896Z</updated>
+    <updated>2019-11-20T04:28:38.044Z</updated>
     <generator>https://github.com/jpmonette/feed</generator>
     <link rel="alternate" href="https://jianhuchen-test.github.io/"/>
     <link rel="self" href="https://jianhuchen-test.github.io//atom.xml"/>
@@ -88,8 +88,8 @@
     </entry>
     <entry>
         <title type="html"><![CDATA[ubuntu16.04安装TensorFlow-GPU]]></title>
-        <id>https://jianhuchen-test.github.io//post/ubuntu1604_tensorflow_gpu_install</id>
-        <link href="https://jianhuchen-test.github.io//post/ubuntu1604_tensorflow_gpu_install">
+        <id>https://jianhuchen-test.github.io//post/ubuntu1604_tensorflow-gpu_install</id>
+        <link href="https://jianhuchen-test.github.io//post/ubuntu1604_tensorflow-gpu_install">
         </link>
         <updated>2018-11-28T05:35:45.000Z</updated>
         <content type="html"><![CDATA[<h2 id="一些废话">一些废话</h2>
