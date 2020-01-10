@@ -1,0 +1,852 @@
+<html>
+  <head>
+    <meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>LSTM+CTC识别变长验证码（人工智能第4次试验） | 不想长大的石头</title>
+<meta name="description" content="" />
+<link rel="shortcut icon" href="https://jianhuchen-test.github.io//favicon.ico?v=1578661943877">
+<link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.7.2/css/all.css" integrity="sha384-fnmOCqbTlWIlj8LyTjo7mOUStjsKC4pOpQbqyi7RrhN7udi9RwhKkMHpvLbHG9Sr" crossorigin="anonymous">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.10.0/katex.min.css">
+<link rel="stylesheet" href="https://jianhuchen-test.github.io//styles/main.css">
+
+<script src="https://cdn.bootcss.com/highlight.js/9.12.0/highlight.min.js"></script>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Droid+Serif:400,700">
+
+
+
+  </head>
+  <body>
+    <div class="main">
+      <div class="main-content">
+        <div class="site-header">
+  <a href="https://jianhuchen-test.github.io/">
+  <img class="avatar" src="https://jianhuchen-test.github.io//images/avatar.png?v=1578661943877" alt="">
+  </a>
+  <h1 class="site-title">
+    不想长大的石头
+  </h1>
+  <p class="site-description">
+    
+  </p>
+  <div class="menu-container">
+    
+      
+        <a href="/" class="menu">
+          🌈首页
+        </a>
+      
+    
+      
+        <a href="/archives" class="menu">
+          📃 归档
+        </a>
+      
+    
+      
+        <a href="/tags" class="menu">
+          🏷 标签
+        </a>
+      
+    
+      
+        <a href="/post/share/" class="menu">
+          👏 共享资源
+        </a>
+      
+    
+      
+        <a href="/post/friends/" class="menu">
+          🍻友链
+        </a>
+      
+    
+      
+        <a href="/post/about/" class="menu">
+          👨‍💻 关于 &amp; 留言
+        </a>
+      
+    
+  </div>
+  <div class="social-container">
+    
+      
+        <a href="https://github.com/jianhuchen" target="_blank">
+          <i class="fab fa-github"></i>
+        </a>
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+  </div>
+</div>
+
+        <div class="post-detail">
+          <article class="post">
+            <h2 class="post-title">
+              LSTM+CTC识别变长验证码（人工智能第4次试验）
+            </h2>
+            <div class="post-info">
+              <span>
+                2018-11-21
+              </span>
+              <span>
+                25 min read
+              </span>
+              
+            </div>
+            
+            <div class="post-content-wrapper">
+              <div class="post-content">
+                <h1 id="1-实验题目">1. 实验题目</h1>
+<p><strong>基于RNN——LSTM+CTC的注册码识别实验</strong></p>
+<h1 id="2-实验过程">2. 实验过程</h1>
+<p>本次实验一共产生了三个文件</p>
+<ul>
+<li>**generate_verification_code.py：**用于产生训练集、验证集、测试集，也就是产生大量验证码</li>
+<li><strong>train_model.py</strong>：训练模型</li>
+<li>**predict_test.py：**用训练好的模型来识别新输入的验证码</li>
+</ul>
+<h2 id="21-产生验证码">2.1 产生验证码</h2>
+<p>本次实验产生验证码的方法与上次直接使用captcha库产生验证码的实验不同，本次使用的是freetype的方法。</p>
+<p><strong>对应文件：generate_verification_code.py：</strong></p>
+<h3 id="211-首先导入所需要的包">2.1.1 首先导入所需要的包</h3>
+<pre><code class="language-python">import string
+import numpy as np
+import copy
+import random
+import cv2
+import freetype
+</code></pre>
+<p>其中：</p>
+<ul>
+<li>
+<p>string在产生验证码内容时会用到，用它来控制产生的验证码包含哪些内容，比如数字、大写字母、小写字母</p>
+</li>
+<li>
+<p>freetype用于对给定的字符产生相应的图片</p>
+</li>
+<li>
+<p>cv2是opencv在python中包的名字，本次实验为了加大难度，使用freetype产生完一张验证码图片后，可以在这张图片的基础之上再加上高斯噪声，这样能加大实验模型的训练难度</p>
+<p>多提一句，当产生的验证码中有噪声时，同样也可以使用opencv的均值模糊、高斯模糊等方法来降低噪声，总之，opencv是一个非常强大的计算机视觉库，它能对图片加噪，也能去噪</p>
+</li>
+<li>
+<p>random库用于产生随机数，因为本实验要求验证码的长度是不确定的</p>
+</li>
+</ul>
+<h3 id="212-定义put_chinese_text类">2.1.2 定义put_chinese_text类</h3>
+<p><strong>put_chinese_text类</strong>用于将某一个串字符“画”到图上去</p>
+<pre><code class="language-python">class put_chinese_text(object):
+	def __init__(self, ttf):
+		self._face = freetype.Face(ttf)
+
+	def draw_text(self, image, pos, text, text_size, text_color):
+		self._face.set_char_size(text_size * 64)
+		metrics = self._face.size
+		ascender = metrics.ascender/64.0
+
+		ypos = int(ascender)
+
+		if not isinstance(text, str):
+			text = text.decode('utf-8')
+		img = self.draw_string(image, pos[0], pos[1]+ypos, text, text_color)
+		return img
+
+	def draw_string(self, img, x_pos, y_pos, text, color):
+		prev_char = 0
+		pen = freetype.Vector()
+		pen.x = x_pos &lt;&lt; 6   # div 64
+		pen.y = y_pos &lt;&lt; 6
+
+		hscale = 1.0
+		matrix = freetype.Matrix(int(hscale)*0x10000, int(0.2*0x10000),\
+								 int(0.0*0x10000), int(1.1*0x10000))
+		cur_pen = freetype.Vector()
+		pen_translate = freetype.Vector()
+
+		image = copy.deepcopy(img)
+		for cur_char in text:
+			self._face.set_transform(matrix, pen_translate)
+
+			self._face.load_char(cur_char)
+			kerning = self._face.get_kerning(prev_char, cur_char)
+			pen.x += kerning.x
+			slot = self._face.glyph
+			bitmap = slot.bitmap
+
+			cur_pen.x = pen.x
+			cur_pen.y = pen.y - slot.bitmap_top * 64
+			self.draw_ft_bitmap(image, bitmap, cur_pen, color)
+
+			pen.x += slot.advance.x
+			prev_char = cur_char
+
+		return image
+
+	def draw_ft_bitmap(self, img, bitmap, pen, color):
+		x_pos = pen.x &gt;&gt; 6
+		y_pos = pen.y &gt;&gt; 6
+		cols = bitmap.width
+		rows = bitmap.rows
+
+		glyph_pixels = bitmap.buffer
+
+		for row in range(rows):
+			for col in range(cols):
+				if glyph_pixels[row*cols + col] != 0:
+					img[y_pos + row][x_pos + col][0] = color[0]
+					img[y_pos + row][x_pos + col][1] = color[1]
+					img[y_pos + row][x_pos + col][2] = color[2]
+</code></pre>
+<h3 id="213-定义generateverificationcode类">2.1.3 定义generateVerificationCode类</h3>
+<p><strong>generateVerificationCode类</strong>用于产生验证码，具体代码如下</p>
+<pre><code class="language-python">class generateVerificationCode(object):
+	def __init__(self,
+					width=256, # 验证码图片的宽
+					height=32, # 验证码图片的高
+					char_max_size=5, # 验证码最多的字符个数
+					characters=string.digits):# + string.ascii_uppercase + string.ascii_lowercase):#验证码组成，数字+大写字母+小写字母
+		self.width = width
+		self.height = height
+		self.char_max_size = char_max_size
+		self.characters = characters
+		self.classes = len(characters) # 一共有多少类
+		self.char_set = list(self.characters)
+		self.ft = put_chinese_text('fonts/OCR-B.ttf')
+
+	def gen_verification_code(self, is_random=False, batch_size=50):
+		X = np.zeros([batch_size, self.height, self.width, 3]) # 3个通道
+		Y = np.zeros([batch_size, self.char_max_size, self.classes]) # one_hot编码
+		text_list=[]
+		while True:
+			for i in range(batch_size):
+				# 随机设定长度
+				if is_random == True:
+					size = random.randint(1, self.char_max_size)
+				else:
+					size = self.char_max_size
+				# 产生size长度的随机串
+				text = ''.join(random.sample(self.characters, size))
+				# 保存所有str类型的label
+				text_list.append(list(text))
+				# 产生一张图片
+				img = np.zeros([self.height, self.width, 3]) # 三个通道
+				color_ = (255,255,255) # Write
+				pos = (0, 3)
+				text_size = 25
+				image = self.ft.draw_text(img, pos, text, text_size, color_)
+				X[i] = np.reshape(image, [self.height, self.width, 3]) # /255.0  # 将数据全部变换到 [0,1] 范围内
+				for j, ch in enumerate(text):
+					Y[i, j, self.characters.find(ch)] = 1
+				# print(&quot;X.shape = &quot;, X.shape)
+				# print(X)
+				# print(&quot;text_list = &quot;, text_list)
+				# print(&quot;Y.shape = &quot;, Y.shape)
+				# print(Y)
+			yield X, text_list, Y
+</code></pre>
+<p><strong>首先看<code>__init__()</code>函数，它一共有5个参数，分别如下：</strong></p>
+<ul>
+<li>width：设置产生的验证码图片的宽</li>
+<li>height：设置产生的验证码图片的高</li>
+<li>char_max_size：设置产生的验证码最多的字符个数， 我这里为了训练速度快一些设成了5</li>
+<li>characters：设置验证码中字符串的组成，我的代码中设置只产生了数字，可以讲它改为<code>string.digits + string.ascii_uppercase + string.ascii_lowercase</code>，这样就可以产生数字、大写字母、小写字母混合的验证码</li>
+</ul>
+<p><strong>再看<code>gen_verification_code()</code>函数，它一共有3各参数，分别如下：</strong></p>
+<ul>
+<li>is_random：设置验证码的长度是否随机，默认是<code>False</code>，此时产生的验证码为定长验证码，长度为<code>char_max_size</code></li>
+<li>batch_size：设置一次产生验证码的张数，例如产生一个batch的训练集时，可以用于指定batch_size</li>
+</ul>
+<p>需要特别说明的是，第31行代码使用numpy产生一个shape为[height, width, 3]的矩阵，相当于是生成一张图片，但图片上什么信息都没有，待会调用<code>put_chinese_text</code>类中的方法来将随机字符串<code>text</code>中的内容“画”上去</p>
+<p><code>color_</code>变量用于设置“画”验证码时验证码上的字符颜色，我这里设置成白色了，<code>pos</code>标量用于设置“画”验证码的起点，<code>text_size</code>用于设置验证码中字符的字体大小</p>
+<p>参数设置好后，再调用<code>put_chinese_text</code>类中的<code>draw_text()</code>方法来“画”验证码，画好之后的图赋值给<code>image</code>变量</p>
+<p><code>gen_verification_code()</code>函数最后返回的变量一共三个，分别如下：</p>
+<ul>
+<li>X：shape=[batch_size, width, height]，产生的验证码的矩阵形式</li>
+<li>text_list：一个长度为batch_size的列表，每个元素对应每张图片上的字符串</li>
+<li>Y：它与text_list的意义相同，只是形式不同，它是text_list的<code>one-hot</code>编码形式</li>
+</ul>
+<p><strong>最后，来测试一下函数的执行情况</strong></p>
+<p>为了方便查看，我将<code>batch_size</code>设为3，将上面代码的39-43行的打印信息代码的注释打开，再执行下方的代码</p>
+<pre><code class="language-python">if __name__ == '__main__':
+	genObj = generateVerificationCode()
+	X, codes, Y = next(genObj.gen_verification_code(is_random=True, batch_size=3))
+	for i in range(3):
+		cv2.imshow(str(codes[i]), X[i])
+	cv2.waitKey(0)
+</code></pre>
+<p>代码中的4-5行使用opencv显示了验证码的图像</p>
+<p>结果如下：</p>
+<img src=".\data_info.png" width="700px" title='data_info'/>
+<img src=".\data_example.png" width="300px" title='data_example'/>
+<p>除此之外，我还定义了一个生成测试集的<code>gen_test_verification_code()</code>函数，它能够方便的生成100（默认）张图片，保存在你指定的目录<code>dir</code>下，在做测试的时候可以使用opencv库读入他们并导入训练好的模型来做测试，后面测试模型时会用到，代码如下：</p>
+<pre><code class="language-python">def gen_test_verification_code(self, dir, is_random=False, num=100):
+	if not os.path.exists(dir):
+		os.makedirs(dir)
+	X = np.zeros([self.height, self.width, 3]) # 3个通道
+	for i in range(num):
+		# 随机设定长度
+		if is_random == True:
+			size = random.randint(1, self.char_max_size)
+		else:
+			size = self.char_max_size
+		# 产生size长度的随机串
+		text = ''.join(random.sample(self.characters, size))
+		# 产生一张图片
+		img = np.zeros([self.height, self.width, 3]) # 三个通道
+		color_ = (255,255,255) # Write
+		pos = (0, 3)
+		text_size = 25
+		image = self.ft.draw_text(img, pos, text, text_size, color_)
+		X = np.reshape(image, [self.height, self.width, 3]) # /255.0  # 将数据全部变换到 [0,1] 范围内
+		cv2.imwrite(dir+'/'+text+'.png', X[:, :, 2])
+		print(&quot;\rGenerating.........(%d/%d)&quot;%(i+1, num), end='')	
+	print(&quot;\nTest verification code generated.........&quot;)
+</code></pre>
+<h2 id="22-训练模型">2.2 训练模型</h2>
+<p>本次实验采用的网络结构为RNN（循环神经网络）中的LSTM（长短时记忆网络），采用CTC（联结主义时间分类器 ，Connectionist Temporal Classifier）作为损失函数，它适合于输入特征和输出标签之间对齐关系不确定的时间序列问题，CTC可以自动端到端地同时优化模型参数和对齐切分的边界。</p>
+<p><strong>对应文件：train_model.py</strong></p>
+<p>首先导入相关的包</p>
+<pre><code class="language-python">from generate_verification_code import *
+import numpy as np
+import time 
+import os
+import tensorflow as tf
+</code></pre>
+<h3 id="221-定义一些超参数">2.2.1 定义一些超参数</h3>
+<pre><code class="language-python">#图片大小，32 x 256
+OUTPUT_SHAPE = (32,256)
+
+# LSTM 循环体个数=64  层数=1
+num_hidden = 64
+num_layers = 1
+
+obj = generateVerificationCode()
+num_classes = obj.classes + 1 + 1  # 10位数字 + blank + ctc blank
+
+#训练最大轮次
+num_epochs = 10000
+
+#初始化学习速率
+INITIAL_LEARNING_RATE = 1e-3
+DECAY_STEPS = 5000
+REPORT_STEPS = 100
+LEARNING_RATE_DECAY_FACTOR = 0.9  # The learning rate decay factor
+
+DIGITS='0123456789'
+BATCHES = 10
+BATCH_SIZE = 64 
+TRAIN_SIZE = BATCHES * BATCH_SIZE
+</code></pre>
+<p>这些超参数在后面用到的时候会陆陆续续提到，这里就不过多解释了，把它放在这里写是因为这些超参数一般都放在文件的头部</p>
+<h3 id="222-关于ctc_loss">2.2.2 关于ctc_loss</h3>
+<p>上面提到了我们的损失函数是<code>ctc_loss</code>，它在<a href="https://www.tensorflow.org/api_docs/python/tf/nn/ctc_loss">tensorflow中的定义</a>如下：</p>
+<pre><code class="language-python">tf.nn.ctc_loss(
+    labels,
+    inputs,
+    sequence_length,
+    preprocess_collapse_repeated=False,
+    ctc_merge_repeated=True,
+    ignore_longer_outputs_than_inputs=False,
+    time_major=True
+)
+</code></pre>
+<ul>
+<li>
+<p><strong>labels</strong>: An <code>int32</code> <code>SparseTensor</code>，用来传入你训练数据的真实值，要求是int32类型的<strong>稀疏矩阵</strong>。</p>
+<blockquote>
+<p>稀疏矩阵：在<strong>矩阵</strong>中，若数值为0的元素数目远远多于非0元素的数目，并且非0元素分布没有规律时，则称该<strong>矩阵</strong>为<strong>稀疏矩阵</strong>；与之相反，若非0元素数目占大多数时，则称该<strong>矩阵</strong>为稠密<strong>矩阵</strong>。（百度百科）</p>
+<p>一个稀疏矩阵由三个要素要确定：</p>
+<ul>
+<li><code>indices</code>:二维int64的矩阵，代表非0的坐标点</li>
+<li><code>values</code>:二维tensor，代表indice位置的数据值</li>
+<li><code>dense_shape</code>:一维，代表稀疏矩阵的大小</li>
+</ul>
+<p>举例：</p>
+<p>拿上面产生的三张验证码的字符串'196'、‘76924’和‘58407’来举例，他们的<code>dense tensor</code>形式如下：</p>
+<pre><code class="language-python">[[1,9,6,0,0]
+ [7,6,9,2,4]
+ [5,8,4,0,7]]
+</code></pre>
+<p>把他们转换成系数矩阵的形式就像这样：</p>
+<pre><code class="language-python">indecs = [[0,0],[0,1],[0,2],[1,0],[1,1],[1,2],[1,3],[1,4],[2,0],[2,1],[2,2],[2,3],[2,4]]
+values = [1,9,6,7,6,9,2,4,5,8,4,0,7]
+dense_shape = [3,5]
+</code></pre>
+</blockquote>
+</li>
+<li>
+<p><strong>inputs</strong>: 3-D <code>float</code> <code>Tensor</code>，用来传入你模型预测出的结果，要求是一个三维float型的数据结构</p>
+<ul>
+<li>
+<p>如果 <strong><code>time_major = False</code></strong>，<strong>inputs</strong>要求的形状为: <code>[batch_size, max_time, num_classes]</code>.</p>
+</li>
+<li>
+<p>如果 <strong><code>time_major = True (默认)</code></strong>，<strong>inputs</strong>要求的形状为: <code>[max_time, batch_size, num_classes]</code>.</p>
+</li>
+</ul>
+</li>
+<li>
+<p><strong>sequence_length</strong>: 1-D <code>int32</code> vector, size <code>[batch_size]</code>.它表示一个batch中每个输入LSTM网络的数据的序列的长度，例如本实验中都是256</p>
+<p>格式要求：一维int32类型的向量，内容为[seq_len,…,seq_len]，长度为batch_size</p>
+</li>
+</ul>
+<p><strong>了解完ctc_loss之后，发现需要做如下工作：</strong></p>
+<ul>
+<li>
+<p><strong>稀疏矩阵的编码</strong></p>
+<p>我们之前使用<strong>generateVerificationCode类</strong>中用<strong>gen_verification_code()函数</strong>产生的数据集，它的返回值中<code>text_list</code>是<code>序列列表</code>的形式，并不是<code>SparseTensor</code>的形式，所以我们需要有函数来将它转换成<code>SparseTensor</code>形式，代码如下：</p>
+</li>
+</ul>
+<pre><code class="language-python">#转化一个序列列表为稀疏矩阵    
+def sparse_tuple_from(sequences, dtype=np.int32):
+	indices = []
+	values = []
+	for n, seq in enumerate(sequences):
+		indices.extend(zip([n] * len(seq), range(len(seq))))
+		values.extend(seq)
+	indices = np.asarray(indices, dtype=np.int64)
+	values = np.asarray(values, dtype=dtype)
+	shape = np.asarray([len(sequences), np.asarray(indices).max(0)[1] + 1], dtype=np.int64)
+	return indices, values, shape
+</code></pre>
+<ul>
+<li>
+<p><strong>系数矩阵的解码</strong></p>
+<p><code>SparseTensor</code>形式的数据是<code>ctc_loss</code>的要求，讲预测值与真实值送进<code>ctc_loss</code>做损失计算，但是最后我们在测试阶段需要看预测的数据对不对，这时需要将<code>SparseTensor</code>形式的数据转换回去（序列列表），代码如下：</p>
+</li>
+</ul>
+<pre><code class="language-python">def decode_sparse_tensor(sparse_tensor):
+	decoded_indexes = list()
+	current_i = 0
+	current_seq = []
+	for offset, i_and_index in enumerate(sparse_tensor[0]):
+		i = i_and_index[0]
+		if i != current_i:
+			decoded_indexes.append(current_seq)
+			current_i = i
+			current_seq = list()
+		current_seq.append(offset)
+	decoded_indexes.append(current_seq)
+	result = []
+	for index in decoded_indexes:
+		result.append(decode_a_seq(index, sparse_tensor))
+	return result
+	
+def decode_a_seq(indexes, spars_tensor):
+	decoded = []
+	for m in indexes:
+		str = DIGITS[spars_tensor[1][m]]
+		decoded.append(str)
+	return decoded
+</code></pre>
+<h3 id="223-训练数据集的生成">2.2.3 训练数据集的生成</h3>
+<p>前面已经有生成验证码的函数了，为什么这里还要写生成训练数据集的函数呢?</p>
+<p>原因前面已经讨论到了，即使用**<code>generateVerificationCode类</code><strong>中用</strong><code>gen_verification_code()函数</code>**产生的数据集的<code>label</code>（标签）并不符合<code>ctc_loss</code>的格式要求，上面也只是定义了可以将<code>序列列表</code>的形式的标签转换成<code>SparseTensor</code>的形式标签的函数，还没有调用，现在做的工作是调用上面的函数来生成数据格式符合<code>ctc_loss</code>要求的训练集，代码如下：</p>
+<pre><code class="language-python"># 生成一个训练batch
+def get_next_batch(batch_size=128, is_random=True):
+	obj = generateVerificationCode()
+	# X.shape=[batch_size, height, width, 3]
+	# 获取一个batch的数据集
+	# codes为一个列表，所有str类型的label
+	X, text_list, Y = next(obj.gen_verification_code(is_random=is_random, batch_size=batch_size))
+	# 这一步的作用：改变形状[batch_size, height, width, 1]=&gt;[batch_size, height, width]=&gt;[batch_size, width, height]
+	X = np.transpose(np.reshape(X[:,:,:,2], [batch_size,OUTPUT_SHAPE[0],OUTPUT_SHAPE[1]]), (0, 2, 1))
+	#targets转成稀疏矩阵 
+	# 返回三个值，非零元素的位置信息，非零元素对应的值，稀疏矩阵的形状
+	sparse_targets = sparse_tuple_from(text_list)
+	#(batch_size,) sequence_length值都是256，最大划分列数
+	seq_len = np.ones(X.shape[0]) * OUTPUT_SHAPE[1]
+	return X, sparse_targets, seq_len 
+</code></pre>
+<p>这个函数的第9行将验证码的颜色变成了单通道，原因也是我希望训练速度能快一些</p>
+<p>函数里面涉及到了很多数据格式的转换，在本实验中的总体的数据流如下：</p>
+<blockquote>
+<p>gen_verification_code()---&gt;[batch_size, seq_len, num_features]</p>
+<p>---&gt;LSTM---&gt;[batch_size, seq_len, cell.output_size]---&gt;reshape</p>
+<p>---&gt;[batch_size*seq_len, num_hidden]---&gt;affine projection A*W+b</p>
+<p>---&gt;[batch_size*seq_len, num_classes]---&gt;reshape</p>
+<p>---&gt;[batch_size, seq_len, num_classes]---&gt;transpose</p>
+<p>---&gt;[seq_len, batch_size, num_classes]</p>
+</blockquote>
+<p>至于为什么要做这么繁琐的数据转换，下面马上要提到啦</p>
+<h3 id="224-定义lstm网络模型">2.2.4 定义LSTM网络模型</h3>
+<p>整体的网络结构是：输入单元—&gt;64个隐藏单元（循环体）—&gt;12个输出单元</p>
+<p>所以在第10行将得到的LSTM输出值reshape成<code>[batch_size\*seq_len, num_hidden]</code>之后，又继续将他们连接到了输出层的12个神经元，最终返回的logits是reshape成<code>[seq_len, batch_size, num_classes]</code>之后的数据</p>
+<p><strong>为什么要这样一直reshape？</strong></p>
+<p>因为这个返回的logis即将要作为<code>inputs</code>数据被喂送到<code>ctc_loss</code>里面啦，上面已经写到了<code>ctc_loss</code>的<code>inputs</code>需要<code>[max_time, batch_size, num_classes]</code>这样的数据格式</p>
+<p><strong>涉及到的超参数：</strong></p>
+<ul>
+<li>num_hidden = 64</li>
+<li>num_layers = 1</li>
+</ul>
+<p>所以这个LSTM网络中间循环体的个数是64个，层数是1</p>
+<pre><code class="language-python">def RNN(inputs, seq_len):
+	#定义LSTM网络
+	cell = tf.contrib.rnn.LSTMCell(num_hidden, state_is_tuple=True)
+	stack = tf.contrib.rnn.MultiRNNCell([cell] * num_layers, state_is_tuple=True)
+	#output的shape=(64,256,64)(batch_size*256条*64个output)[batch_size,seq_len,cell.output_size]
+	outputs, _ = tf.nn.dynamic_rnn(cell, inputs, seq_len, dtype=tf.float32)
+	shape = tf.shape(inputs)
+	batch_s, max_timesteps = shape[0], shape[1]
+	# 为方便矩阵运算，reshape一下outputs，outputs的size是(64*256,64)
+	outputs = tf.reshape(outputs, [-1, num_hidden])
+	# 初始化权值  生成一个截断的正态分布
+	weights = tf.Variable(tf.truncated_normal([num_hidden, num_classes], stddev=0.1), name=&quot;W&quot;)
+	bias = tf.Variable(tf.constant(0., shape=[num_classes]), name=&quot;b&quot;)
+	# 计算结果
+	# result形状：[64*256, 12]
+	logits = tf.matmul(outputs, weights) + bias
+	# reshape之后logits的shape是(64,256,12) [batch_size,seq_len,num_classes]
+	logits = tf.reshape(logits, [tf.shape(inputs)[0], -1, num_classes])
+	#交换坐标轴，axis0和axis1互换，logits的shape是(256,64,12) [seq_len,batch_size,num_classes]
+	logits = tf.transpose(logits, (1, 0, 2))
+	return logits
+</code></pre>
+<h3 id="225-开始训练">2.2.5 开始训练</h3>
+<p>在开始训练之前，先定义一个函数来检测待会儿模型预测结果的正确率，并且打印出预测的结果和真实的label</p>
+<pre><code class="language-python">def do_report():
+	test_inputs,test_targets,test_seq_len = get_next_batch(BATCH_SIZE)
+	test_feed = {inputs: test_inputs, targets: test_targets, seq_len: test_seq_len}
+	decoded_list, log_probs, accuracy = session.run([decoded[0], log_prob, acc], test_feed)
+	
+	original_list = decode_sparse_tensor(test_targets)
+	detected_list = decode_sparse_tensor(decoded_list)
+
+	true_numer = 0
+	if len(original_list) != len(detected_list):
+		print(&quot;len(original_list)&quot;, len(original_list), &quot;len(detected_list)&quot;, len(detected_list),
+			  &quot; test and detect length desn't match&quot;)
+		return -1
+	print(&quot;T/F: original(length) &lt;-------&gt; detectcted(length)&quot;)
+	for idx, number in enumerate(original_list):
+		detect_number = detected_list[idx]
+		hit = (number == detect_number)
+		print(hit, number, &quot;(&quot;, len(number), &quot;) &lt;-------&gt; &quot;, detect_number, &quot;(&quot;, len(detect_number), &quot;)&quot;)
+		if hit:
+			true_numer = true_numer + 1
+	Accuracy = true_numer * 1.0 / len(original_list)
+	print(&quot;Test Accuracy:&quot;, Accuracy)
+	return Accuracy
+</code></pre>
+<p>接下来看开始写训练的代码</p>
+<p><strong>涉及到的超参数：</strong></p>
+<ul>
+<li>epoch：训练的轮数，由前面的<code>num_epochs = 10000</code>控制，表示最多训练10000轮</li>
+<li>BATCHES：表示一轮训练里batch的数量，本实验中我设置的是10</li>
+<li>BATCH_SIZE：表示每个batch中的验证码个数</li>
+<li>TRAIN_SIZE：表示一个epoch训练下来，一共使用了多少张验证码</li>
+</ul>
+<pre><code class="language-python">if __name__ == '__main__':
+	# 用来记录全局step，每更新一次参数就会+1
+	global_step = tf.Variable(0, trainable=False)
+	inputs = tf.placeholder(tf.float32, [None, OUTPUT_SHAPE[1], OUTPUT_SHAPE[0]])
+	#targets是标签(稀疏矩阵的形式)，因为定义ctc_loss需要的稀疏矩阵
+	targets = tf.sparse_placeholder(tf.int32)
+	#1维向量 序列长度 [batch_size,]
+	#是一个长度=BATCH_SIZE=64的一维向量,每个里面都是256，表示一个batch中每一张有256条输入序列  
+	seq_len = tf.placeholder(tf.int32, [None])
+	# 定义指数下降的学习率
+	learning_rate = tf.train.exponential_decay(INITIAL_LEARNING_RATE, global_step, DECAY_STEPS, LEARNING_RATE_DECAY_FACTOR, staircase=True)
+	# 调用前面定义好的模型，并传入值
+	logits = RNN(inputs, seq_len)
+	# 定义CTC损失函数 需要喂入数据：targets，logits，seq_len
+	cost = tf.reduce_mean(tf.nn.ctc_loss(labels=targets, inputs=logits, sequence_length=seq_len))
+	# 使用AdamOptimizer进行优化
+	optimizer = tf.train.AdamOptimizer(learning_rate=learning_rate).minimize(cost, global_step=global_step)
+	# 解码，获得结果
+	decoded, log_prob = tf.nn.ctc_beam_search_decoder(logits, seq_len, merge_repeated=False)
+	# 求准确率
+	acc = tf.reduce_mean(tf.edit_distance(tf.cast(decoded[0], tf.int32), targets))
+
+	with tf.Session() as session:
+		session.run(tf.global_variables_initializer())
+		# 载入模型
+		saver = tf.train.Saver(tf.global_variables(), max_to_keep=3)
+		ckpt_dir = &quot;./ckpt_dir&quot;
+		if not os.path.exists(ckpt_dir):
+			os.makedirs(ckpt_dir)
+		ckpt = tf.train.get_checkpoint_state(ckpt_dir)
+		if ckpt and ckpt.model_checkpoint_path:
+			saver.restore(session, ckpt.model_checkpoint_path)
+			print(&quot;Restore succcess! path:&quot;, ckpt.model_checkpoint_path)
+
+		# 开始训练
+		# 定义训练结束的标志，当正确率达到某一值时，可以通过设置它来提前结束训练
+		train_end_flag = False
+		start_time = time.time() # 记录时间
+		for curr_epoch in range(num_epochs):
+			print(&quot;Epoch.......&quot;, curr_epoch)
+			train_cost =  0
+			for batch in range(BATCHES):
+				b_start_time = time.time()
+				# 产生mini-batch=64的训练集数据
+				train_inputs, train_targets, train_seq_len = get_next_batch(BATCH_SIZE)
+				feed = {inputs: train_inputs, targets: train_targets, seq_len: train_seq_len}
+				train_acc, _, b_cost, steps,  = session.run([acc, optimizer, cost, global_step], feed)
+				train_cost += b_cost
+				print(&quot;Step:&quot;, steps, &quot;, batch_time:&quot;, time.time()-b_start_time, 's')
+				# 每REPORT_STEPS个step测试一下正确率，并打印预测结果和真实label
+				if steps &gt; 0 and steps % REPORT_STEPS == 0:
+					if(do_report()&gt;0.9):
+						save_path = saver.save(session, ckpt_dir+&quot;/model.ckpt&quot;, global_step=steps)
+						print(&quot;save succcess! path:&quot;, save_path)
+						print(&quot;=============================&gt;Train succcess, Time:&quot;, time.time()-start_time, 's!')
+						# 如果正确率超过了0.9就可以提起停止训练啦
+						train_end_flag = True
+						break
+			# 提前停止训练            
+			if train_end_flag:
+				break
+			# 每过一个epoch，计算一个训练误差
+			train_cost /= BATCHES
+			# 每过一个epoch，调用一下验证集测试
+			val_inputs, val_targets, val_seq_len = get_next_batch(BATCH_SIZE)
+			val_feed = {inputs: val_inputs,	targets: val_targets, seq_len: val_seq_len}
+			val_cost, vald_acc, lr, steps = session.run([cost, acc, learning_rate, global_step], feed_dict=val_feed)
+			log = &quot;Epoch {}/{}, steps = {}, train_cost = {:.3f}, val_cost = {:.3f}, time = {:.3f}s, learning_rate = {}&quot;
+			print(log.format(curr_epoch + 1, num_epochs, steps, train_cost, val_cost, time.time()-b_start_time, lr))
+</code></pre>
+<h2 id="23-测试模型">2.3 测试模型</h2>
+<p><strong>对应文件：predict_test.py</strong></p>
+<p>首先导入相关的包</p>
+<pre><code class="language-python"># 首先导入需要的库
+import tensorflow as tf
+import cv2
+import sys
+import os
+from generate_verification_code import *
+from train_model import *
+</code></pre>
+<p>调用<code>gen_test_verification_code()</code>函数产生100张验证码</p>
+<pre><code class="language-python"># 设置产生测试集文件夹的名字
+Testing_set_dir = 'TestingSet'
+obj = generateVerificationCode()
+# 生成验证码
+obj.gen_test_verification_code(Testing_set_dir, is_random=True, num=100)
+</code></pre>
+<p>生成验证码后可以打开<code>TestingSet</code>目录查看看生成的验证码</p>
+<img src=".\testing_set.png" width="700px" title='testing_set'/>
+<blockquote>
+<p>虽然希望产生的是100张验证码，但是可能在产生的过程中会有重名的情况，这样就把之前的验证码覆盖掉了，所以最终产生的测试集数量可能会小于100</p>
+</blockquote>
+<p><code>gen_test_verification_code()</code>函数生成的验证码使用该验证码里面的字符命名，这样可以方便读入验证码的时候一起读入他们的<code>label</code></p>
+<p>下方的代码是使用<code>opencv</code>读入刚才产生的验证码</p>
+<pre><code class="language-python"># 获取这个目录里的所有图片名字列表
+file_list = os.listdir(Testing_set_dir) # 获取此路径下的所有文件的名字列表
+# print(file_list)
+# 将100个训练样本打包到test_x
+test_x = np.zeros([len(file_list), obj.height, obj.width]) # 1个通道
+text_list = []
+for i, file in enumerate(file_list):
+	image = cv2.imread(Testing_set_dir + '/' + file)
+	gray_image = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
+	test_x[i] = gray_image
+	text = list(file)[:-4] # remove '.png'
+	text_list.append(text)
+# [num, height, width]=&gt;[num, width, height]
+test_x = np.transpose(test_x, (0, 2, 1)) 
+test_targets = sparse_tuple_from(text_list)
+test_seq_len = np.ones(test_x.shape[0]) * test_x.shape[1]
+</code></pre>
+<p>跟之前产生训练集一样，需要对读入的图片的数据做相应的数据变换（<code>opencv</code>读入后的数据格式为<code>numpy</code>的<code>array</code>）</p>
+<p>最后产生的数据保存在<code>test_x</code>、<code>test_targets</code>和<code>test_seq_len</code>中</p>
+<ul>
+<li>test_x：shape=[num, width, height]</li>
+<li>test_targets：稀疏矩阵形式的label</li>
+<li>test_seq_len：LSTM网络的时间序列长度，也就是每张图片的长度</li>
+</ul>
+<p>测试数据产生完后，接下来开始测试训练好的模型</p>
+<pre><code class="language-python"># 定义一些placeholder作为输入数据的入口
+inputs = tf.placeholder(tf.float32, [None, OUTPUT_SHAPE[1], OUTPUT_SHAPE[0]])
+#targets是标签(稀疏矩阵的形式)，因为定义ctc_loss需要的稀疏矩阵
+targets = tf.sparse_placeholder(tf.int32)
+#1维向量 序列长度 [batch_size,]
+#是一个长度=BATCH_SIZE=64的一维向量,每个里面都是256，表示一个batch中每一张有256条输入序列  
+seq_len = tf.placeholder(tf.int32, [None])
+# 调用前面定义好的模型，并传入值
+logits = RNN(inputs, seq_len)
+# 解码，获得结果
+decoded, log_prob = tf.nn.ctc_beam_search_decoder(logits, seq_len, merge_repeated=False)
+</code></pre>
+<p>定义会话开始测试</p>
+<pre><code class="language-python">with tf.Session() as session:
+	session.run(tf.global_variables_initializer())
+	# 载入模型
+	saver = tf.train.Saver(tf.global_variables(), max_to_keep=3)
+	ckpt_dir = &quot;./ckpt_dir&quot;
+	if not os.path.exists(ckpt_dir):
+		os.makedirs(ckpt_dir)
+	ckpt = tf.train.get_checkpoint_state(ckpt_dir)
+	if ckpt and ckpt.model_checkpoint_path:
+		saver.restore(session, ckpt.model_checkpoint_path)
+		print(&quot;Restore succcess! path:&quot;, ckpt.model_checkpoint_path)
+	else:
+		# 如果没有找到保存的模型参数，打印出错信息
+		print(&quot;Error：Model not found&quot;)
+
+	# 开始喂入测试数据进行预测，结果保存到pre_list列表中
+	test_feed = {inputs: test_x, targets: test_targets, seq_len: test_seq_len}
+	decoded_list = session.run(decoded[0], test_feed)
+    # 解码并开始作对比
+	original_list = decode_sparse_tensor(test_targets)
+	detected_list = decode_sparse_tensor(decoded_list)
+	true_numer = 0
+	if len(original_list) != len(detected_list):
+		print(&quot;len(original_list)&quot;, len(original_list), &quot;len(detected_list)&quot;, len(detected_list),
+			  &quot; test and detect length desn't match&quot;)
+	print(&quot;T/F: original(length) &lt;-------&gt; detectcted(length)&quot;)
+	for idx, number in enumerate(original_list):
+		detect_number = detected_list[idx]
+		hit = (number == detect_number)
+		print(hit, number, &quot;(&quot;, len(number), &quot;) &lt;-------&gt; &quot;, detect_number, &quot;(&quot;, len(detect_number), &quot;)&quot;)
+		if hit:
+			true_numer = true_numer + 1
+	Accuracy = true_numer * 1.0 / len(original_list)
+	print(&quot;Test Accuracy:&quot;, Accuracy)
+</code></pre>
+<p>我的测试结果：</p>
+<pre><code class="language-python">Generating.........(100/100)
+Test verification code generated
+Restore succcess! path: ./ckpt_dir/model.ckpt-1900
+T/F: original(length) &lt;-------&gt; detectcted(length)
+True ['8', '4'] ( 2 ) &lt;-------&gt;  ['8', '4'] ( 2 )
+True ['0', '9', '4', '3'] ( 4 ) &lt;-------&gt;  ['0', '9', '4', '3'] ( 4 )
+True ['0'] ( 1 ) &lt;-------&gt;  ['0'] ( 1 )
+True ['8', '2'] ( 2 ) &lt;-------&gt;  ['8', '2'] ( 2 )
+True ['5', '0', '6', '4', '1'] ( 5 ) &lt;-------&gt;  ['5', '0', '6', '4', '1'] ( 5 )
+...（省略）
+True ['1', '7', '8', '2', '4'] ( 5 ) &lt;-------&gt;  ['1', '7', '8', '2', '4'] ( 5 )
+True ['0', '8', '1', '4', '9'] ( 5 ) &lt;-------&gt;  ['0', '8', '1', '4', '9'] ( 5 )
+True ['1', '5'] ( 2 ) &lt;-------&gt;  ['1', '5'] ( 2 )
+Test Accuracy: 1.0
+</code></pre>
+<h2 id="24-遇到的问题">2.4 遇到的问题</h2>
+<p><strong>unicode编码报错：<code>NameError: name 'unicode' is not defined</code></strong></p>
+<img src="./UnicodeErroro.jpg" width="400px" />
+<p>**错误原因：**在python3中才会报此错误，所以应该是ython版本不兼容所致，python3将<code>unicode</code>改为<code>str</code>了</p>
+<p>**解决办法：**如果你使用的是python3，将<code>unicode</code>改为<code>str</code>即可解决</p>
+<p><strong>参考资料：</strong></p>
+<p><a href="https://www.tensorflow.org/api_docs/python/tf/nn/ctc_loss">Tensorflow官网</a>(可能需要科学上网)</p>
+<p>http://ilovin.me/2017-04-23/tensorflow-lstm-ctc-input-output/</p>
+<p>https://www.jianshu.com/p/45828b18f133</p>
+<p>https://github.com/jimmyleaf/ocr_tensorflow_cnn</p>
+
+              </div>
+              <div class="toc-container">
+                <ul class="markdownIt-TOC">
+<li><a href="#1-%E5%AE%9E%E9%AA%8C%E9%A2%98%E7%9B%AE">1. 实验题目</a></li>
+<li><a href="#2-%E5%AE%9E%E9%AA%8C%E8%BF%87%E7%A8%8B">2. 实验过程</a>
+<ul>
+<li><a href="#21-%E4%BA%A7%E7%94%9F%E9%AA%8C%E8%AF%81%E7%A0%81">2.1 产生验证码</a>
+<ul>
+<li><a href="#211-%E9%A6%96%E5%85%88%E5%AF%BC%E5%85%A5%E6%89%80%E9%9C%80%E8%A6%81%E7%9A%84%E5%8C%85">2.1.1 首先导入所需要的包</a></li>
+<li><a href="#212-%E5%AE%9A%E4%B9%89put_chinese_text%E7%B1%BB">2.1.2 定义put_chinese_text类</a></li>
+<li><a href="#213-%E5%AE%9A%E4%B9%89generateverificationcode%E7%B1%BB">2.1.3 定义generateVerificationCode类</a></li>
+</ul>
+</li>
+<li><a href="#22-%E8%AE%AD%E7%BB%83%E6%A8%A1%E5%9E%8B">2.2 训练模型</a>
+<ul>
+<li><a href="#221-%E5%AE%9A%E4%B9%89%E4%B8%80%E4%BA%9B%E8%B6%85%E5%8F%82%E6%95%B0">2.2.1 定义一些超参数</a></li>
+<li><a href="#222-%E5%85%B3%E4%BA%8Ectc_loss">2.2.2 关于ctc_loss</a></li>
+<li><a href="#223-%E8%AE%AD%E7%BB%83%E6%95%B0%E6%8D%AE%E9%9B%86%E7%9A%84%E7%94%9F%E6%88%90">2.2.3 训练数据集的生成</a></li>
+<li><a href="#224-%E5%AE%9A%E4%B9%89lstm%E7%BD%91%E7%BB%9C%E6%A8%A1%E5%9E%8B">2.2.4 定义LSTM网络模型</a></li>
+<li><a href="#225-%E5%BC%80%E5%A7%8B%E8%AE%AD%E7%BB%83">2.2.5 开始训练</a></li>
+</ul>
+</li>
+<li><a href="#23-%E6%B5%8B%E8%AF%95%E6%A8%A1%E5%9E%8B">2.3 测试模型</a></li>
+<li><a href="#24-%E9%81%87%E5%88%B0%E7%9A%84%E9%97%AE%E9%A2%98">2.4 遇到的问题</a></li>
+</ul>
+</li>
+</ul>
+
+              </div>
+            </div>
+          </article>
+        </div>
+
+        
+
+        
+          
+            <link rel="stylesheet" href="https://unpkg.com/gitalk/dist/gitalk.css">
+<script src="https://unpkg.com/gitalk/dist/gitalk.min.js"></script>
+
+<div id="gitalk-container"></div>
+
+<script>
+
+  var gitalk = new Gitalk({
+    clientID: '13244a83a82befebfcfd',
+    clientSecret: 'c583df657426ac6aa4051674839478a647b5ae96',
+    repo: 'jianhuchen-test.github.io',
+    owner: 'jianhuchen-test',
+    admin: ['jianhuchen-test'],
+    id: (location.pathname).substring(0, 49),      // Ensure uniqueness and length less than 50
+    distractionFreeMode: false  // Facebook-like distraction free mode
+  })
+
+  gitalk.render('gitalk-container')
+
+</script>
+
+          
+
+          
+        
+
+        <div class="site-footer">
+   | 
+  <a class="rss" href="https://jianhuchen-test.github.io//atom.xml" target="_blank">RSS</a>
+</div>
+
+<script>
+  hljs.initHighlightingOnLoad()
+
+  let mainNavLinks = document.querySelectorAll(".markdownIt-TOC a");
+
+  // This should probably be throttled.
+  // Especially because it triggers during smooth scrolling.
+  // https://lodash.com/docs/4.17.10#throttle
+  // You could do like...
+  // window.addEventListener("scroll", () => {
+  //    _.throttle(doThatStuff, 100);
+  // });
+  // Only not doing it here to keep this Pen dependency-free.
+
+  window.addEventListener("scroll", event => {
+    let fromTop = window.scrollY;
+
+    mainNavLinks.forEach((link, index) => {
+      let section = document.getElementById(decodeURI(link.hash).substring(1));
+      let nextSection = null
+      if (mainNavLinks[index + 1]) {
+        nextSection = document.getElementById(decodeURI(mainNavLinks[index + 1].hash).substring(1));
+      }
+      if (section.offsetTop <= fromTop) {
+        if (nextSection) {
+          if (nextSection.offsetTop > fromTop) {
+            link.classList.add("current");
+          } else {
+            link.classList.remove("current");    
+          }
+        } else {
+          link.classList.add("current");
+        }
+      } else {
+        link.classList.remove("current");
+      }
+    });
+  });
+
+</script>
+
+      </div>
+    </div>
+  </body>
+</html>

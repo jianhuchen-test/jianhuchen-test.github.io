@@ -2,7 +2,7 @@
   <head>
     <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
-<title>🍻 友情链接 | 不想长大的石头</title>
+<title>python3安装freetype、cv2和captcha的方法 | 不想长大的石头</title>
 <meta name="description" content="" />
 <link rel="shortcut icon" href="https://jianhuchen-test.github.io//favicon.ico?v=1578661943877">
 <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.7.2/css/all.css" integrity="sha384-fnmOCqbTlWIlj8LyTjo7mOUStjsKC4pOpQbqyi7RrhN7udi9RwhKkMHpvLbHG9Sr" crossorigin="anonymous">
@@ -89,11 +89,11 @@
         <div class="post-detail">
           <article class="post">
             <h2 class="post-title">
-              🍻 友情链接
+              python3安装freetype、cv2和captcha的方法
             </h2>
             <div class="post-info">
               <span>
-                2018-11-20
+                2018-11-22
               </span>
               <span>
                 1 min read
@@ -103,10 +103,39 @@
             
             <div class="post-content-wrapper">
               <div class="post-content">
-                <p><a href="http://keyanjie.net/">Alan Ke</a></p>
-<p><a href="http://www.windsings.com/">且听风吟</a></p>
-<p><a href="http://cjcongjia.cn/">从嘉(´ฅω•ฅ｀)</a></p>
-<p><a href="https://xq99.me/">冰水鉴心</a></p>
+                <p>在人工智能第3次和第4此实验时，用到了freetype、cv2和captcha这几个库，我在安装的时候发现，<strong>freetype和cv2在导入时的名字与安装时的名字不一样</strong>，所以做了一下总结：</p>
+<p>freetype、cv2和captcha在**导入时的名字（Model）<strong>和</strong>安装时的名字（Name）**分别如下表所示：</p>
+<table>
+<thead>
+<tr>
+<th style="text-align:center">Num</th>
+<th style="text-align:center">Model</th>
+<th style="text-align:center">Name</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:center">1</td>
+<td style="text-align:center">freetype</td>
+<td style="text-align:center">freetype-py</td>
+</tr>
+<tr>
+<td style="text-align:center">2</td>
+<td style="text-align:center">cv2</td>
+<td style="text-align:center">opencv-python</td>
+</tr>
+<tr>
+<td style="text-align:center">3</td>
+<td style="text-align:center">captcha</td>
+<td style="text-align:center">captcha</td>
+</tr>
+</tbody>
+</table>
+<p>所以使用这几句话就可以分别安装他们啦~</p>
+<pre><code class="language-bash">pip install freetype-py
+pip install opencv-python
+pip install captcha
+</code></pre>
 
               </div>
               <div class="toc-container">
@@ -116,6 +145,15 @@
           </article>
         </div>
 
+        
+          <div class="next-post">
+            <div class="next">下一篇</div>
+            <a href="https://jianhuchen-test.github.io//post/lstmctc_captcha_recongnize">
+              <h3 class="post-title">
+                LSTM+CTC识别变长验证码（人工智能第4次试验）
+              </h3>
+            </a>
+          </div>
         
 
         
